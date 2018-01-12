@@ -50,68 +50,81 @@
 import java.util.*;
 
 public class PokerHand{
-    private Map<Integer,List<Character>> whiteMap;
-    private Map<Integer,List<Character>> blackMap;
+    private Map<Character,List<Character>> whiteMap;
+    private Map<Character,List<Character>> blackMap;
     public PokerHand(String orgStr){
-        String[] strs = orgStr.split("[\\r\\n]+",str.length());
+        String[] strs = orgStr.split("[\\r\\n]+",orgStr.length());
         for(String str:strs){
             // String[] subStrs = str.split(" +");
             // if(subStrs.length != 5) 
+            // stuck if char[0:2] = 10
             char[] chars = str.toCharArray();
             whiteMap = deposSubStr(chars, whiteMap,0, 15);
-            blackMap = deposSubStr(chars, blackMap, 15, 29);
+            blackMap = deposSubStr(chars, blackMap, 15, chars.length);
         }
     }
 
-    private Map<> deposSubStr(char[] chars, Map<> map, int start, int end){
-        map.put(chars[start], chars[start+1]);
+    private Map<Character,List<Character>>  deposSubStr(char[] chars, Map<Character,List<Character>>  map, int start, int end){
+        List<Character> typeList = new ArrayList<>();
+        typeList.add(chars[start+1]);
+        map.put(chars[start], typeList);
         for(int i=start+2;i<end;i++){
             if(chars[i] == ' '){
-                map.put(chars[i+1], chars[i+2]);
+                if(map.containsKey(chars[i+1])){
+                    typeList = map.get(chars[i+1]);
+                    typeList.add(chars[i+2]);
+                }
+                else{
+                    typeList.add(chars[i+2]);
+                }
+                map.put(chars[i+1], typeList);
+                typeList.clear();
             }
         }
         return map;
     }
 
-    public String ranking(Map<> map){
+    public String ranking(Map<Character,List<Character>> map){
         String whiteWin = new String("White wins.");
         String blackWin = new String("Black wins.");
         return new String("tie");
     }
 
-    public int isStraightFlush(){
-        return 9;
+    public int isStraightFlush(Map<Character,List<Character>> map){
+        if(map.containsKey("A") && map.containsKey("K") && map.containsKey("Q") && map.containsKey("J")) return 9;
+        return -1;
     }
 
-    public int isFourOfKind(){
+    public int isFourOfKind(Map<Character,List<Character>> map){
+        
         return 8;
     }
 
-    public int isFullHouse(){
+    public int isFullHouse(Map<Character,List<Character>> map){
         return 7;
     }
 
-    public int isFlush(){
+    public int isFlush(Map<Character,List<Character>> map){
         return 6;
     }
 
-    public int isStright(){
+    public int isStright(Map<Character,List<Character>> map){
         return 5;
     }
 
-    public int isThreeOfKind(){
+    public int isThreeOfKind(Map<Character,List<Character>> map){
         return 4;
     }
 
-    public int isTwoPairs(){
+    public int isTwoPairs(Map<Character,List<Character>> map){
         return 3;
     }
 
-    public int isPair(){
+    public int isPair(Map<Character,List<Character>> map){
         return 2;
     }
 
-    public int isHighCard(){
+    public int isHighCard(Map<Character,List<Character>> map){
         return 1;
     }
 
