@@ -10,6 +10,8 @@ public class fileIO
 {
     public static void main(String[] args) throws IOException
     {
+        // FileReader(String fileName)
+        // Creates a new FileReader, given the name of the file to read from.
         List<String> strs = readFile("test.txt");
         System.out.println(strs);
     }
@@ -18,8 +20,7 @@ public class fileIO
       List<String> records = new ArrayList<String>();
       try
       {
-        // FileReader(String fileName)
-        // Creates a new FileReader, given the name of the file to read from.
+        
         BufferedReader reader = new BufferedReader(new FileReader(filename));
         String line;
         while ((line = reader.readLine()) != null)
