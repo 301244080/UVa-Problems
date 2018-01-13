@@ -8,14 +8,14 @@ import java.util.*;
  
 public class fileIO
 {
-    public static void main(String[] args) throws IOException
-    {
-        // FileReader(String fileName)
-        // Creates a new FileReader, given the name of the file to read from.
-        List<String> strs = readFile("test.txt");
-        System.out.println(strs);
-    }
-    private static List<String> readFile(String filename)
+    // public static void main(String[] args) throws IOException
+    // {
+    //     // FileReader(String fileName)
+    //     // Creates a new FileReader, given the name of the file to read from.
+    //     List<String> strs = readFile("test.txt");
+    //     System.out.println(strs);
+    // }
+    public static List<String> readFile(String filename)
     {
       List<String> records = new ArrayList<String>();
       try

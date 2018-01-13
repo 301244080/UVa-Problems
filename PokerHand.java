@@ -47,72 +47,113 @@
         Tie.
 */
 
+// package fileIO;
+
 import java.util.*;
+// import fileIO.fileIO;
 
 public class PokerHand{
-    private Map<Character,List<Character>> whiteMap;
-    private Map<Character,List<Character>> blackMap;
+    private Map<Integer,List<Character>> whiteMap = new HashMap<>();
+    private Map<Integer,List<Character>> blackMap = new HashMap<>();
+
+    public static void main(String[] args) {
+        fileIO readFile = new fileIO();
+        List<String> strs = readFile.readFile("test.txt");
+        // System.out.println(strs.get(0));
+        PokerHand pk = new PokerHand(strs.get(0));
+    }
     public PokerHand(String orgStr){
-        String[] strs = orgStr.split("[\\r\\n]+",orgStr.length());
-        for(String str:strs){
-            // String[] subStrs = str.split(" +");
-            // if(subStrs.length != 5) 
-            // stuck if char[0:2] = 10
-            char[] chars = str.toCharArray();
-            whiteMap = deposSubStr(chars, whiteMap,0, 15);
-            blackMap = deposSubStr(chars, blackMap, 15, chars.length);
-        }
+        String[] subStrs = orgStr.split(" +");
+        whiteMap = deposSubStr(subStrs, whiteMap,0, 5);
+        // isStraightFlush(whiteMap);
+        System.out.println(whiteMap.keySet());
+        System.out.println(isFlush(whiteMap));
+        blackMap = deposSubStr(subStrs, blackMap, 5, subStrs.length);
     }
 
-    private Map<Character,List<Character>>  deposSubStr(char[] chars, Map<Character,List<Character>>  map, int start, int end){
-        List<Character> typeList = new ArrayList<>();
-        typeList.add(chars[start+1]);
-        map.put(chars[start], typeList);
-        for(int i=start+2;i<end;i++){
-            if(chars[i] == ' '){
-                if(map.containsKey(chars[i+1])){
-                    typeList = map.get(chars[i+1]);
-                    typeList.add(chars[i+2]);
-                }
-                else{
-                    typeList.add(chars[i+2]);
-                }
-                map.put(chars[i+1], typeList);
-                typeList.clear();
+    private Map<Integer,List<Character>>  deposSubStr(String[] strs, Map<Integer,List<Character>>  map, int start, int end){
+        List<Character> suitList = new ArrayList<>();
+        for(int i=start;i<end;i++){
+            String str = strs[i];
+            int strLen = str.length();
+            int value;
+            // System.out.println(str.substring(0,strLen-1));
+            char suit = str.charAt(strLen-1);
+            if(str.substring(0,2).equals("10")){
+                
+                value = 10;
             }
+            else if(str.charAt(0) == 'K') value = 13;
+            else if(str.charAt(0) == 'Q') value = 12;
+            else if(str.charAt(0) == 'J') value = 11;
+            else if(str.charAt(0) == 'A') value = 1;
+            else{
+                value = Integer.parseInt(str.substring(0,1));
+            }
+            if(map.containsKey(value)){
+                suitList = map.get(value);
+                suitList.add(suit);
+            }
+            else{
+                suitList.add(suit);
+            }
+            map.put(value, suitList);
+            suitList.clear();
+            
         }
         return map;
     }
 
-    public String ranking(Map<Character,List<Character>> map){
+    public String ranking(Map<Integer,List<Character>> map){
         String whiteWin = new String("White wins.");
         String blackWin = new String("Black wins.");
         return new String("tie");
     }
 
-    public int isStraightFlush(Map<Character,List<Character>> map){
-        if(map.containsKey("A") && map.containsKey("K") && map.containsKey("Q") && map.containsKey("J")) return 9;
+    public int isStraightFlush(Map<Integer,List<Character>> map){
+        
+        if(map.containsKey(1) && map.containsKey(11) && map.containsKey(12) && map.containsKey(11) && map.containsKey(10)){
+            List<Character> suitsA = map.get(1);
+            if(map.get(11).containsAll(suitsA) && map.get(12).containsAll(suitsA) && map.get(13).containsAll(suitsA) && map.get(10).containsAll(suitsA)){
+                return 9;
+            }
+            
+        } 
         return -1;
     }
 
-    public int isFourOfKind(Map<Character,List<Character>> map){
-        
-        return 8;
+    public int isFourOfKind(Map<Integer,List<Character>> map){
+        for(Integer key:map.keySet()){
+            if(map.get(key).size()==4) return 8;
+        }
+        return -1;
     }
 
-    public int isFullHouse(Map<Character,List<Character>> map){
-        return 7;
+    public int isFullHouse(Map<Integer,List<Character>> map){
+        if(map.keySet().size()==2) return 7;
+        return -1;
     }
 
-    public int isFlush(Map<Character,List<Character>> map){
-        return 6;
+    public int isFlush(Map<Integer,List<Character>> map){
+        Set<Integer> set = map.keySet();
+        if(set.size()==5){
+            Set<List<Character>> flushSet = new HashSet<>();
+            int i = 0;
+            for(int key:set){
+                flushSet.add(map.get(key));
+                if(flushSet.size()!=1) return -1;
+            }
+            return 6;
+
+        }
+        return -1;
     }
 
-    public int isStright(Map<Character,List<Character>> map){
+    public int isStraight(Map<Integer,List<Character>> map){
         return 5;
     }
 
-    public int isThreeOfKind(Map<Character,List<Character>> map){
+    public int isThreeOfKind(Map<Integer,List<Character>> map){
         return 4;
     }
 
