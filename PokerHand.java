@@ -112,23 +112,38 @@ public class PokerHand{
         return new String("tie");
     }
 
-    public int isStraightFlush(Map<Integer,List<Character>> map){
-        
+    public int[] isStraightFlush(Map<Integer,List<Character>> map){
+        int[] res = new int[1];
+        res[0] = -1;
         if(map.containsKey(1) && map.containsKey(11) && map.containsKey(12) && map.containsKey(11) && map.containsKey(10)){
             List<Character> suitsA = map.get(1);
             if(map.get(11).containsAll(suitsA) && map.get(12).containsAll(suitsA) && map.get(13).containsAll(suitsA) && map.get(10).containsAll(suitsA)){
-                return 9;
+                res[0] = 9;
             }
             
         } 
-        return -1;
+        return res;
     }
 
-    public int isFourOfKind(Map<Integer,List<Character>> map){
+    public int[] isFourOfKind(Map<Integer,List<Character>> map){
+        int[] res = new int[3];
+        res[0] = -1;
         for(Integer key:map.keySet()){
-            if(map.get(key).size()==4) return 8;
+            if(map.get(key).size()>1 && map.get(key).size()<4){
+                break;
+            }
+            else{
+                if(map.get(key).size()==4){
+                    res[0] = 8;
+                    res[1] = key;
+                }
+                if(map.get(key).size() == 1){
+                    res[2] = key;
+                }
+            }
+            
         }
-        return -1;
+        return res;
     }
 
     public int[] isFullHouse(Map<Integer,List<Character>> map){
@@ -156,6 +171,7 @@ public class PokerHand{
 
     public int[] isFlush(Map<Integer,List<Character>> map){
         int[] res = new int[2];
+        // res record is flush and the max value of flush
         res[0] = -1;
         Set<Integer> set = map.keySet();
         if(set.size()==5){
@@ -174,15 +190,43 @@ public class PokerHand{
         return res;
     }
 
-    public int isStraight(Map<Integer,List<Character>> map){
-        return 5;
+    public int[] isStraight(Map<Integer,List<Character>> map){
+        // res record isStraight and max value of Straight
+        int[] res = new int[2];
+        res[0] = -1;
+        int[] cardArr = new int[26];
+        for(int key:map.keySet()){
+            cardArr[key-1] = 1; 
+            cardArr[key+12] = 1;
+        }
+        for(int i=0;i<22;i++){
+            if(cardArr[i] == 1 && cardArr[i+1] == 1 && cardArr[i+2] == 1&& cardArr[i+3]==1 && cardArr[i+4]==1){
+                res[0]=5;
+                res[1] = cardArr[i+4];
+            }
+        }
+        
+        return res;
     }
 
-    public int isThreeOfKind(Map<Integer,List<Character>> map){
+    public int[] isThreeOfKind(Map<Integer,List<Character>> map){
+        int[] res = new int[4];
+        res[0] = -1;
+        int single = 2;
         for(int key:map.keySet()){
-
+            if(map.get(key).size() == 3){
+                res[0] = 4;
+                res[1] = key;
+            }
+            else if(map.get(key).size()== 2 || map.get(key).size() == 4){
+                break;
+            }
+            else{
+                res[single] = key;
+                single++;
+            }
         }
-        return 4;
+        return res;
     }
 
     public int[] isTwoPairs(Map<Integer,List<Character>> map){
