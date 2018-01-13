@@ -67,7 +67,7 @@ public class PokerHand{
         whiteMap = deposSubStr(subStrs, whiteMap,0, 5);
         // isStraightFlush(whiteMap);
         // System.out.println(whiteMap.keySet());
-        System.out.println(isPair(whiteMap)[1]);
+        System.out.println(isStraightFlush(whiteMap)[0]);
         // blackMap = deposSubStr(subStrs, blackMap, 5, subStrs.length);
     }
 
@@ -113,15 +113,12 @@ public class PokerHand{
     }
 
     public int[] isStraightFlush(Map<Integer,List<Character>> map){
-        int[] res = new int[1];
+        int[] res = new int[2];
         res[0] = -1;
-        if(map.containsKey(1) && map.containsKey(11) && map.containsKey(12) && map.containsKey(11) && map.containsKey(10)){
-            List<Character> suitsA = map.get(1);
-            if(map.get(11).containsAll(suitsA) && map.get(12).containsAll(suitsA) && map.get(13).containsAll(suitsA) && map.get(10).containsAll(suitsA)){
-                res[0] = 9;
-            }
-            
-        } 
+        if(isStraight(map)[0]!= -1 && isFlush(map)[0]!=-1){
+            res[0] = 9;
+            res[1] = isStraight(map)[1];
+        }
         return res;
     }
 
