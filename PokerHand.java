@@ -50,6 +50,7 @@
 // package fileIO;
 
 import java.util.*;
+import javax.rmi.CORBA.Tie;
 // import fileIO.fileIO;
 
 public class PokerHand{
@@ -71,8 +72,25 @@ public class PokerHand{
         whiteMap = deposSubStr(subStrs, whiteMap,0, 5);
         // System.out.println(isStraightFlush(whiteMap)[0]);
         blackMap = deposSubStr(subStrs, blackMap, 5, subStrs.length);
-        ranking(whiteMap);
-        ranking(blackMap);
+        int[] whiteRes = ranking(whiteMap);
+        // System.out.println(whiteRes[0]);
+        int[] blackRes = ranking(blackMap);
+        // System.out.println(blackRes[0]<whiteRes[0]);
+        int whitePos=0, blackPos=0;
+        while(whitePos < whiteRes.length && blackPos < blackRes.length){
+            if(whiteRes[whitePos] == blackRes[blackPos]){
+                System.out.println(TIE);
+                break;
+            }
+            else if(whiteRes[whitePos] > blackRes[blackPos]){
+                System.out.println(WHITE_WIN);
+                break;
+            }
+            else{
+                System.out.println(BLACK_WIN);
+                break;
+            }
+        }
     }
 
     private Map<Integer,List<Character>>  deposSubStr(String[] strs, Map<Integer,List<Character>>  map, int start, int end){
@@ -107,14 +125,14 @@ public class PokerHand{
             }
             map.put(value, suitList);
             // 
-            System.out.println(map.get(value));
+            // System.out.println(map.get(value));
             
         }
         return map;
     }
 
     public int[] ranking(Map<Integer,List<Character>> map){
-        int[] res = new int[4];
+        int[] res = new int[5];
         if(isStraightFlush(map)[0]!=-1){
             res = isStraightFlush(map);
         }
@@ -245,15 +263,17 @@ public class PokerHand{
         int[] res = new int[4];
         res[0] = -1;
         int single = 2;
+        boolean findThree = false;
         for(int key:map.keySet()){
             if(map.get(key).size() == 3){
                 res[0] = 4;
                 res[1] = key;
+                findThree = true;
             }
             else if(map.get(key).size()== 2 || map.get(key).size() == 4){
                 break;
             }
-            else{
+            else if(findThree){
                 res[single] = key;
                 single++;
             }
@@ -273,7 +293,6 @@ public class PokerHand{
             if(map.get(key).size()==2){
                 times++;
                 res[times] = key;
-                
             }
             if(map.get(key).size()==1) res[3] =key;
         }
