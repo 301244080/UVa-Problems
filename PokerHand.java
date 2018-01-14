@@ -55,6 +55,10 @@ import java.util.*;
 public class PokerHand{
     private Map<Integer,List<Character>> whiteMap = new HashMap<>();
     private Map<Integer,List<Character>> blackMap = new HashMap<>();
+    final String WHITE_WIN = new String("White wins.");
+    final String BLACK_WIN = new String("Black wins.");
+    final String TIE = new String("tie");
+    // private int[] res = new res[5];
 
     public static void main(String[] args) {
         fileIO readFile = new fileIO();
@@ -65,19 +69,22 @@ public class PokerHand{
     public PokerHand(String orgStr){
         String[] subStrs = orgStr.split(" +");
         whiteMap = deposSubStr(subStrs, whiteMap,0, 5);
-        // isStraightFlush(whiteMap);
-        // System.out.println(whiteMap.keySet());
-        System.out.println(isStraightFlush(whiteMap)[0]);
-        // blackMap = deposSubStr(subStrs, blackMap, 5, subStrs.length);
+        // System.out.println(isStraightFlush(whiteMap)[0]);
+        blackMap = deposSubStr(subStrs, blackMap, 5, subStrs.length);
+        ranking(whiteMap);
+        ranking(blackMap);
     }
 
     private Map<Integer,List<Character>>  deposSubStr(String[] strs, Map<Integer,List<Character>>  map, int start, int end){
+        /* 
+        
+
+        */
         List<Character> suitList = new ArrayList<>();
         for(int i=start;i<end;i++){
             String str = strs[i];
             int strLen = str.length();
             int value;
-            // System.out.println(str.substring(0,strLen-1));
             char suit = str.charAt(strLen-1);
             if(str.substring(0,2).equals("10")){
                 
@@ -106,14 +113,42 @@ public class PokerHand{
         return map;
     }
 
-    public String ranking(Map<Integer,List<Character>> map){
-        String whiteWin = new String("White wins.");
-        String blackWin = new String("Black wins.");
-        return new String("tie");
+    public int[] ranking(Map<Integer,List<Character>> map){
+        int[] res = new int[4];
+        if(isStraightFlush(map)[0]!=-1){
+            res = isStraightFlush(map);
+        }
+        else if(isFourOfKind(map)[0]!=-1){
+            res = isFourOfKind(map);
+        }
+        else if(isFullHouse(map)[0]!=-1){
+            res = isFullHouse(map);
+        }
+        else if(isFlush(map)[0]!=-1){
+            res = isFlush(map);
+        }
+        else if(isStraight(map)[0]!=-1){
+            res = isStraight(map);
+        }
+        else if(isThreeOfKind(map)[0]!=-1){
+            res = isThreeOfKind(map);
+        }
+        else if(isTwoPairs(map)[0]!=-1){
+            res = isTwoPairs(map);
+        }
+        else if(isPair(map)[0] != -1){
+            res = isPair(map);
+        }
+        else{
+            res = isHighCard(map);
+        }
+        
+        return res;
     }
 
     public int[] isStraightFlush(Map<Integer,List<Character>> map){
         int[] res = new int[2];
+        //res 0 stand for is straight flush or not, res 1 for max value for straight
         res[0] = -1;
         if(isStraight(map)[0]!= -1 && isFlush(map)[0]!=-1){
             res[0] = 9;
@@ -228,7 +263,7 @@ public class PokerHand{
 
     public int[] isTwoPairs(Map<Integer,List<Character>> map){
         //size 3 record 2 paired number
-        int[] res = new int[3];
+        int[] res = new int[4];
         res[0] = -1;
         int times =0;
         for(int key:map.keySet()){
@@ -240,6 +275,7 @@ public class PokerHand{
                 res[times] = key;
                 
             }
+            if(map.get(key).size()==1) res[3] =key;
         }
         return res;
     }
