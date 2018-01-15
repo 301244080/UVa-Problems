@@ -1,0 +1,64 @@
+/*
+ * Question 3
+ */
+import java.io.*;
+import java.util.*;
+import java.util.StringTokenizer;
+public class question3 {
+	
+//	 public static List<String> readFile(String filename)
+//	    {
+//	      List<String> records = new ArrayList<String>();
+//	      try
+//	      {
+//	        
+//	        BufferedReader reader = new BufferedReader(new FileReader(filename));
+//	        String line;
+//	        while ((line = reader.readLine()) != null)
+//	        {
+//	          records.add(line);
+//	        }
+//	        reader.close();
+//	        return records;
+//	      }
+//	      catch (Exception e)
+//	      {
+//	        System.err.format("Exception occurred trying to read '%s'.", filename);
+//	        e.printStackTrace();
+//	        return null;
+//	      }
+//	    }
+static int totalNode;
+static ArrayList<Integer>[] adjList;
+	public static void main(String[] args) throws IOException 
+	{
+		BufferedReader reader = new BufferedReader(new FileReader("test.txt"));
+		while(true)
+		{
+//			StringTokenizer input = new StringTokenizer(reader.readLine());
+			totalNode =Integer.parseInt(reader.readLine());
+			adjList = new ArrayList[totalNode];
+			System.out.print(totalNode);
+			for(int index=0;index < totalNode; index++)
+			{
+				adjList[index] = new ArrayList<Integer>();
+			}
+			
+			for(int i = 0; i < totalNode; i++)
+			{
+				StringTokenizer st = new StringTokenizer(reader.readLine());
+				int u = Integer.parseInt(st.nextToken());
+				int v = Integer.parseInt(st.nextToken());
+				adjList[u].add(v); 
+				adjList[v].add(u);
+				System.out.println(v);
+				
+				
+			}
+			
+		}
+
+	}
+}
+
+

@@ -1,0 +1,108 @@
+/*
+ * Question 3
+ */
+import java.io.FileReader; 
+import java.io.*;
+import java.io.IOException;
+import java.util.*;
+import java.util.Scanner;
+public class question3 {
+	
+//	 public static List<String> readFile(String filename)
+//	    {
+//	      List<String> records = new ArrayList<String>();
+//	      try
+//	      {
+//	        
+//	        BufferedReader reader = new BufferedReader(new FileReader(filename));
+//	        String line;
+//	        while ((line = reader.readLine()) != null)
+//	        {
+//	          records.add(line);
+//	        }
+//	        reader.close();
+//	        return records;
+//	      }
+//	      catch (Exception e)
+//	      {
+//	        System.err.format("Exception occurred trying to read '%s'.", filename);
+//	        e.printStackTrace();
+//	        return null;
+//	      }
+//	    }
+
+	public static void main(String[] args) throws IOException {
+		try {
+			Scanner scanner = new Scanner(new File("test.txt"));
+			int i=0;
+			while(scanner.hasNext()&&(!scanner.equals("0")))
+			{
+				
+					
+					i=i+1;
+				
+			}
+				System.out.print(i);
+				scanner.close();
+			
+			
+	      }
+			catch(Exception e) {
+
+			}
+		
+		}
+
+}
+
+/*
+#include <stdio.h>
+#include <vector>
+using namespace std;
+vector<int> g[5005];
+int st, ed, used[5005] = {}, found, path[5005];
+void dfs(int len, int nd) {
+    if(used[nd] || found)    return;
+    path[len] = nd;
+    if(nd == ed) {
+        if(len%2 == 0) {
+            printf("The fleas meet at %d.\n", path[len/2]);
+        } else {
+            if(path[len/2] < path[len/2+1])
+                printf("The fleas jump forever between %d and %d.\n", path[len/2], path[len/2+1]);
+            else
+                printf("The fleas jump forever between %d and %d.\n", path[len/2+1], path[len/2]);
+        }
+        found = 1;
+        return;
+    }
+    used[nd] = 1;
+    int i;
+    for(i = 0; i < g[nd].size(); i++)
+        dfs(len+1, g[nd][i]);
+    used[nd] = 0;
+}
+int main() {
+    int n, q, x, y, i;
+    while(scanf("%d", &n) == 1 && n) {
+        for(i = 1; i <= n; i++)
+            g[i].clear();
+        for(i = 1; i < n; i++) {
+            scanf("%d %d", &x, &y);
+            g[x].push_back(y);
+            g[y].push_back(x);
+        }
+        scanf("%d", &q);
+        while(q--) {
+            scanf("%d %d", &st, &ed);
+            if(st == ed) {
+                printf("The fleas meet at %d.\n", st);
+                continue;
+            }
+            found = 0;
+            dfs(0, st);
+        }
+    }
+    return 0;
+}
+*/
