@@ -3,7 +3,7 @@
  */
 import java.io.*;
 import java.util.*;
-public class question3 {
+public class Main {
 	
 
 
@@ -71,14 +71,15 @@ static int length;
 		int totalNode;
 		int numberOfLoops=1;
 		
-		@SuppressWarnings("resource")
+
 		//BufferedReader reader = new BufferedReader(new FileReader("test.txt"));
-		Scanner scanner = new Scanner(new FileReader("test.txt"));
+		//Scanner scanner = new Scanner(new FileReader("test.txt"));
+		Scanner scanner = new Scanner(new InputStreamReader(System.in));
 		while(true)
 		{
 			
 			totalNode =scanner.nextInt();
-			String line;
+
 			if(totalNode==0)
 			{
 				if(scanner.hasNext()){
@@ -87,15 +88,15 @@ static int length;
 				}
 				else
 				{
-					System.out.println(" ");
-					System.out.println("program end");
+//					System.out.println(" ");
+//					System.out.println("program end");
 					break;
 				}
 	
 			}
-			System.out.println(" ");
-			System.out.println("This is case number: "+ numberOfLoops);
-			System.out.println(" ");
+//			System.out.println(" ");
+//			System.out.println("This is case number: "+ numberOfLoops);
+//			System.out.println(" ");
 			adjList = new ArrayList[totalNode+1];
 			
 			for(int index=1;index <= totalNode; index++)
