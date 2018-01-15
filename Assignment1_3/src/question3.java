@@ -69,17 +69,33 @@ static int length;
 	public static void main(String[] args) throws IOException 
 	{
 		int totalNode;
-		int numberOfLoops=0;
+		int numberOfLoops=1;
 		
-		BufferedReader reader = new BufferedReader(new FileReader("test.txt"));
+		@SuppressWarnings("resource")
+		//BufferedReader reader = new BufferedReader(new FileReader("test.txt"));
+		Scanner scanner = new Scanner(new FileReader("test.txt"));
 		while(true)
 		{
 			
-			totalNode =Integer.parseInt(reader.readLine());
+			totalNode =scanner.nextInt();
+			String line;
 			if(totalNode==0)
 			{
-				break;
+				if(scanner.hasNext()){
+				totalNode =scanner.nextInt();
+
+				}
+				else
+				{
+					System.out.println(" ");
+					System.out.println("program end");
+					break;
+				}
+	
 			}
+			System.out.println(" ");
+			System.out.println("This is case number: "+ numberOfLoops);
+			System.out.println(" ");
 			adjList = new ArrayList[totalNode+1];
 			
 			for(int index=1;index <= totalNode; index++)
@@ -89,8 +105,8 @@ static int length;
 			
 			for(int i = 0; i < totalNode-1; i++)
 			{
-				StringTokenizer st = new StringTokenizer(reader.readLine());
-				int leftInt = Integer.parseInt(st.nextToken());
+				StringTokenizer st = new StringTokenizer(scanner.nextLine());
+				int leftInt = scanner.nextInt();
 				if(leftInt>=adjList.length)
 				{
 					temp = new ArrayList[adjList.length];
@@ -108,7 +124,7 @@ static int length;
 						adjList[index] = temp[index];
 					}
 				}
-				int rightInt = Integer.parseInt(st.nextToken());
+				int rightInt = scanner.nextInt();
 				if(rightInt>=adjList.length)
 				{
 					temp = new ArrayList[adjList.length];
@@ -132,47 +148,28 @@ static int length;
 			
 		
 
-			int NumberOfCase = Integer.parseInt(reader.readLine());
+			int NumberOfCase = scanner.nextInt();
 			while(NumberOfCase-->0){
-				StringTokenizer st = new StringTokenizer(reader.readLine());
-				int leftInt2 = Integer.parseInt(st.nextToken());
-				int rightInt2 = Integer.parseInt(st.nextToken());
+				StringTokenizer st = new StringTokenizer(scanner.nextLine());
+				int leftInt2 = scanner.nextInt();
+				int rightInt2 = scanner.nextInt();
 				length=0;
 				Arrays.fill(path, 0);
 				Arrays.fill(visited, 0);
-				//dfs(leftInt2,rightInt2,-1);
 				visited[leftInt2]=1;
 				dfs(leftInt2,rightInt2,0);
-				
-//				if(length%2!=0)
-//				{
-//					System.out.println("The fleas meet at "+ path[length/2]);
-//					
-//				}
-//				else
-//				{
-//					int a= path[length/2-1];
-//					int b= path[length/2];
-//					if(a>b)
-//					{
-//						int temp=a;
-//						a=b;
-//						b=temp;
-//					}
-//					System.out.println("The fleas jump forever between "+a+" and "+b);
-//				}
 			}
 			numberOfLoops++;
 			
-			//print out the adjacent list 
-			for(int index=1;index <= totalNode; index++)
-			{
-				System.out.println(adjList[index]);
-			}
 			
-			//System.out.println(adjList[1].get(0));
+			//print out the adjacent list 
+//			for(int index=1;index <= totalNode; index++)
+//			{
+//				System.out.println(adjList[index]);
+//			}
+			
 		}
-//		System.out.println(numberOfLoops);
+	
 
 	}
 }
