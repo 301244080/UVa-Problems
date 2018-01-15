@@ -8,42 +8,12 @@ public class question3 {
 
 
 static ArrayList<Integer>[] adjList;
+static ArrayList<Integer>[] temp;
 static int path[]= new int[5005];
 static int visited[]=new int[5005];
 static int length;
 
-//	static boolean dfs(int left, int right, int fa)
-//	{
-//		visited[left]=true;
-//		path[length++]=left;
-//		for(int a=0;a<10;a++){
-//			System.out.print(path[a]);
-//			
-//		}
-//		System.out.println("end");
-//		if(left==right)
-//		{
-//			return true;
-//		}
-//		
-//		for(int i=0; i<adjList[left].size();i++)
-//		{
-//			int a = adjList[left].get(i);
-//			if(visited[a])
-//			{
-//				continue;
-//			}
-//			
-//			if(dfs(a,right,left))
-//			{
-//				
-//				return true;
-//			}
-//		}
-//		
-//		return false;
-//		
-//	}
+
 	static boolean dfs(int left, int right, int distance)
 	{
 		
@@ -121,14 +91,46 @@ static int length;
 			{
 				StringTokenizer st = new StringTokenizer(reader.readLine());
 				int leftInt = Integer.parseInt(st.nextToken());
+				if(leftInt>=adjList.length)
+				{
+					temp = new ArrayList[adjList.length];
+					for(int index=1;index <= adjList.length-1; index++)
+					{
+						temp[index] = adjList[index];
+					}
+					adjList = new ArrayList[leftInt+1];
+					for(int index=1;index <= leftInt; index++)
+					{
+						adjList[index] = new ArrayList<Integer>();
+					}
+					for(int index=1;index <= temp.length-1; index++)
+					{
+						adjList[index] = temp[index];
+					}
+				}
 				int rightInt = Integer.parseInt(st.nextToken());
+				if(rightInt>=adjList.length)
+				{
+					temp = new ArrayList[adjList.length];
+					for(int index=1;index <= adjList.length-1; index++)
+					{
+						temp[index] = adjList[index];
+					}
+					adjList = new ArrayList[rightInt+1];
+					for(int index=1;index <= rightInt; index++)
+					{
+						adjList[index] = new ArrayList<Integer>();
+					}
+					for(int index=1;index <= temp.length-1; index++)
+					{
+						adjList[index] = temp[index];
+					}
+				}
 				adjList[leftInt].add(rightInt); 
 				adjList[rightInt].add(leftInt);
-				
-				
-				
 			}
 			
+		
 
 			int NumberOfCase = Integer.parseInt(reader.readLine());
 			while(NumberOfCase-->0){
