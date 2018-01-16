@@ -26,7 +26,7 @@ static int length;
 				{
 					index=path[index];
 				}
-				System.out.println("The fleas meet at "+ index);
+				System.out.println("The fleas meet at "+ index+".");
 			}
 			else
 			{
@@ -43,7 +43,7 @@ static int length;
 						index=a;
 						a=temp;
 					}
-					System.out.println("The fleas jump forever between "+index+" and "+a);
+					System.out.println("The fleas jump forever between "+index+" and "+a+".");
 			}
 			return true;
 		}
@@ -171,7 +171,7 @@ static int length;
 			
 		}
 	
-
+		return;
 	}
 }
 
