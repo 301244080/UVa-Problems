@@ -7,40 +7,9 @@ import java.io.FileReader;
 import java.util.*;
 
  
-class fileIO
-{
-    // public static void main(String[] args) throws IOException
-    // {
-    //     // FileReader(String fileName)
-    //     // Creates a new FileReader, given the name of the file to read from.
-    //     List<String> strs = readFile("test.txt");
-    //     System.out.println(strs);
-    // }
-    public static List<String> readFile(String filename)
-    {
-      List<String> records = new ArrayList<String>();
-      try
-      {
-        
-        BufferedReader reader = new BufferedReader(new FileReader(filename));
-        String line;
-        while ((line = reader.readLine()) != null)
-        {
-          records.add(line);
-        }
-        reader.close();
-        return records;
-      }
-      catch (Exception e)
-      {
-        System.err.format("Exception occurred trying to read '%s'.", filename);
-        e.printStackTrace();
-        return null;
-      }
-    }
-}
 
-public class PokerHand{
+
+class PokerHand{
 
     public Map<Integer,List<Character>> whiteMap = new TreeMap<>(Collections.reverseOrder());
     public Map<Integer,List<Character>> blackMap = new TreeMap<>(Collections.reverseOrder());
@@ -49,15 +18,6 @@ public class PokerHand{
     final String TIE = new String("Tie.");
     public String result;
 
-    public static void main(String[] args) {
-        fileIO readFile = new fileIO();
-        List<String> strs = readFile.readFile("test.txt");
-        for(int i=0; i<strs.size();i++){
-            PokerHand pk = new PokerHand(strs.get(i));
-            System.out.println(pk.result);
-        }
-        
-    }
     public PokerHand(String orgStr){
         String[] subStrs = orgStr.split(" +");
         whiteMap = deposSubStr(subStrs, whiteMap,0, 5);
@@ -69,17 +29,14 @@ public class PokerHand{
         // System.out.println(whiteRes[whitePos]);
         // System.out.println(blackRes[blackPos]);
         while(whitePos < whiteRes.length && blackPos < blackRes.length){
-
-            System.out.println("White  "+whiteRes[whitePos] );
-            System.out.println("Black  "+blackRes[blackPos] );
             if(whiteRes[whitePos] == blackRes[blackPos]){
                 
                 whitePos++;
-                blackPos++;
                 if(whitePos == whiteRes.length || blackPos == blackRes.length){
                     this.result = TIE;
                     break;
                 } 
+                blackPos++;
             }
             else if(whiteRes[whitePos] > blackRes[blackPos]){
                 this.result = WHITE_WIN;
@@ -335,4 +292,30 @@ public class PokerHand{
         return res;
     }
 
+}
+
+class Main{
+
+    public static void main(String[] args) {
+        List<String> records = new ArrayList<String>();
+        try
+        {
+            BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
+            String line;
+            while ((line = reader.readLine()) != null)
+            {
+                records.add(line);
+            }
+        }
+        catch (Exception e)
+        {
+          System.err.format("Exception occurred trying to read");
+          e.printStackTrace();
+        }
+        for(int i=0; i<records.size();i++){
+            PokerHand pk = new PokerHand(records.get(i));
+            System.out.println(pk.result);
+        }
+        
+    }
 }
