@@ -20,10 +20,11 @@
  * 
  */
 
-import ErdosNumber.Author;
 import java.util.*;
 
 public class ErdosNumber {
+
+    final String ERDOS_NAME = new String("Erdos, P.");
 
     static class ErdosInput{
         int scenarioNum;
@@ -53,46 +54,84 @@ public class ErdosNumber {
     }
 
     static class Paper{
-        List<Author> authors = new ArrayList<>();
+        Set<String> authors = new HashSet<>();
         String paperName;
         public Paper(String[] authorsName, String paperName){
             for(int i=0; i<authorsName.length;i++){
-                this.authors.add(new Author(authorsName[i]));
+                this.authors.add(authorsName[i]);
             }
             this.paperName = paperName;
         }
     }
 
-    static class Author{
-        String authorName;
-        int erdosNum = Integer.MAX_VALUE;
-        List<Author> relations = new ArrayList<>();
-        public Author(String author){
-            this.authorName = author;
-            if(this.authorName == "Erdos, P."){
-                this.erdosNum = 0;
-            }
-        }
-    }
+    // static class Author{
+    //     String authorName;
+    //     int erdosNum = Integer.MAX_VALUE;
+    //     // List<Author> relations = new ArrayList<>();
+    //     public Author(String author){
+    //         this.authorName = author;
+    //         if(this.authorName == "Erdos, P."){
+    //             this.erdosNum = 0;
+    //         }
+    //     }
+    // }
 
     public static void main(String[] args) {
         fileIO readFile = new fileIO();
         List<String> strs = readFile.readFile("test2.txt");
         ErdosNumber erdos = new ErdosNumber(strs);
-        
     }
     
 
     public ErdosNumber(List<String> str){
+        Map<String,Set<String>> map = new HashMap<>();
         ErdosInput parsedErdosInput =  new ErdosInput(str);
+        
         System.out.println(parsedErdosInput.targetAuthor[0]);
         System.out.println("Scenario Number: " + parsedErdosInput.scenarioNum);
+        
+        // Draw Graph
         for(Paper paper: parsedErdosInput.papers){
-            int maxErdos = Integer.MIN_VALUE;
-            for(Author author: paper.authors){
-                
+            // int maxErdos = Integer.MIN_VALUE;
+            Set<String> paperAuthorSet = paper.authors;
+            for(String author: paper.authors){
+                if(!map.containsKey(author)) {
+                    map.put(author, new HashSet<String>());
+                }
             }
+
+            // !! need add neighbours in the map
+
+
         }
 
+        //Parse Graph
+        Map<String,Integer> res = bfs(map);
+
+        for(int i=0;i< parsedErdosInput.targetAuthor.length; i++){
+            System.out.println(res.get(parsedErdosInput.targetAuthor[i]));
+        }
+        
+
+    }
+
+
+    private Map<String,Integer> bfs(Map<String,Set<String>> map){
+        int count = 0;
+        Map<String,Integer> res = new HashMap<>();
+        Queue<String> queue = new LinkedList<>();
+        queue.offer(ERDOS_NAME);
+        while(!queue.isEmpty()){
+            for(int i=0;i<queue.size();i++){
+                String curr = queue.poll();
+                for(String key:map.get(curr)){
+                    res.put(key,count);
+                    queue.offer(key);
+                }
+            }
+            count++;
+        }
+
+        return res;
     }
 }
