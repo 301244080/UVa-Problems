@@ -1,0 +1,32 @@
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.List;
+
+public class ErdosNumber {
+
+	public static void main(String[] args) throws IOException {
+		// TODO Auto-generated method stub
+		BufferedReader br = new BufferedReader (new InputStreamReader(System.in));
+		int n;
+		n = br.read();
+		while (n-- > 0) {		
+			int P = br.read();
+			int N = br.read();
+			
+			List<String> authors = new ArrayList<>();
+			for (int i = 0; i < P; i++) {
+//				List<String> temp_list = new ArrayList<>();
+				String line = br.readLine();
+				String[] linePart1 = line.split(":");
+				String[] temp_list = linePart1[0].split(",");
+				for (int j = 0; j < temp_list.length; j++) {
+					
+				}
+			}
+			
+		}
+	}
+
+}
