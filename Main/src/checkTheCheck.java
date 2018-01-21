@@ -1,6 +1,7 @@
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 
 class checkTheCheck {
 	
@@ -46,10 +47,10 @@ class checkTheCheck {
 	public static void main(String[] args) throws IOException {
 		
 		// Use File Stream Reader
-		 BufferedReader br = new BufferedReader (new FileReader ("C:\\Users\\yy957\\Desktop\\ACM\\Main\\inputs\\p10196.txt"));
+//		 BufferedReader br = new BufferedReader (new FileReader ("C:\\Users\\yy957\\Desktop\\ACM\\Main\\inputs\\p10196.txt"));
 		
 		// Use Input Steam Reader
-//		BufferedReader br = new BufferedReader (new InputStreamReader(System.in));
+		BufferedReader br = new BufferedReader (new InputStreamReader(System.in));
 		
 		Chess[] pieces = new Chess[6];
 		
