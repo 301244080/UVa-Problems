@@ -14,14 +14,13 @@ static int visited[]=new int[5005];
 static int length;
 
 
-	static boolean dfs(int left, int right, int distance)
-	{
-		
-		if(right==left)
+	static boolean dfs(int start, int end, int distance)
+	{	
+		if(end==start)
 		{
 			if(distance%2==0)
 			{
-				int index=right;
+				int index=end;
 				for(int i=0;i<distance/2;i++)
 				{
 					index=path[index];
@@ -30,7 +29,7 @@ static int length;
 			}
 			else
 			{
-				int index=right;
+				int index=end;
 				int a;
 				for(int i=0;i<(distance-1)/2;i++)
 				{
@@ -47,37 +46,34 @@ static int length;
 			}
 			return true;
 		}
-		for(int i=0;i<adjList[left].size();i++)
+		for(int i=0;i<adjList[start].size();i++)
 		{
-			int b = adjList[left].get(i);
+			int b = adjList[start].get(i);
 			if(visited[b]==0)
 			{
 				visited[b]=1;
-				path[b]=left;
-				if(dfs(b,right,distance+1))
+				path[b]=start;
+				if(dfs(b,end,distance+1))
 				{
+					//System.out.println("path"+b);
 					return true;
 				}
 			}
 		}
 		
-		return false;
-		
+		return false;	
 	}
 
 	@SuppressWarnings("unchecked")
 	public static void main(String[] args) throws IOException 
 	{
 		int totalNode;
-		int numberOfLoops=1;
-		
-
+		//int numberOfLoops=1;
 		//BufferedReader reader = new BufferedReader(new FileReader("test.txt"));
 		//Scanner scanner = new Scanner(new FileReader("test.txt"));
 		Scanner scanner = new Scanner(new InputStreamReader(System.in));
 		while(true)
-		{
-			
+		{			
 			totalNode =scanner.nextInt();
 
 			if(totalNode==0)
@@ -90,9 +86,9 @@ static int length;
 				{
 //					System.out.println(" ");
 //					System.out.println("program end");
+					scanner.close();
 					break;
-				}
-	
+				}	
 			}
 //			System.out.println(" ");
 //			System.out.println("This is case number: "+ numberOfLoops);
@@ -106,7 +102,7 @@ static int length;
 			
 			for(int i = 0; i < totalNode-1; i++)
 			{
-				StringTokenizer st = new StringTokenizer(scanner.nextLine());
+
 				int leftInt = scanner.nextInt();
 				if(leftInt>=adjList.length)
 				{
@@ -146,12 +142,10 @@ static int length;
 				adjList[leftInt].add(rightInt); 
 				adjList[rightInt].add(leftInt);
 			}
-			
-		
 
 			int NumberOfCase = scanner.nextInt();
 			while(NumberOfCase-->0){
-				StringTokenizer st = new StringTokenizer(scanner.nextLine());
+
 				int leftInt2 = scanner.nextInt();
 				int rightInt2 = scanner.nextInt();
 				length=0;
@@ -159,14 +153,16 @@ static int length;
 				Arrays.fill(visited, 0);
 				visited[leftInt2]=1;
 				dfs(leftInt2,rightInt2,0);
+				
+				
 			}
-			numberOfLoops++;
+			//numberOfLoops++;
 			
 			
 			//print out the adjacent list 
 //			for(int index=1;index <= totalNode; index++)
 //			{
-//				System.out.println(adjList[index]);
+//				System.out.println("node "+index+adjList[index]);
 //			}
 			
 		}
