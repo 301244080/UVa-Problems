@@ -1,7 +1,10 @@
 #include<cstdlib>
 #include<cstdio>
-#include<cstring>
+// #include<cstring>
+#include<string>
 #include<iostream>
+#include<stdio.h>
+#include<stdlib.h>
 using namespace std;
 
 int N, m, n;
@@ -10,36 +13,51 @@ int l;
 
 int main(){
 
-  freopen("10010.in","r",stdin);
-  scanf("%d", &N);
-  for (int i = 1; i <= N; i++) {
-    scanf("%d%d", &m, &n);
-    printf("%d\n%d\n%d\n",N, m, n);
-    char grid[m+1][n+1];
-    char temp;
-    scanf("%c",&temp);
-    for (int j = 1; j <= m; j++) {
-      for (int k = 1; k <= n; k++) {
-        scanf("%c", &grid[j][k]);
-      }
-      scanf("%c",&temp);
+
+    ios_base::sync_with_stdio(false);
+    cin.tie(NULL);
+
+    freopen("10010.in","r",stdin);
+    cin >> N;
+    cout << N << endl;
+    cin >> m >> n;
+    cout << m << endl;
+    cout << n << endl;
+
+
+    char grid[m][n];
+    for (int i = 0; i < m; i++) {
+        for (int j = 0; j < n; j++) {
+            cin >> grid[i][j];
+
+            // test IO
+            cout << grid[i][j];
+        }
+        cout << endl;
     }
 
-    // test I/O
-    for (int a = 1; a <= m; a++) {
-      for (int b = 1; b <= n; b++) {
-        printf("%c", grid[a][b]);
-      }
-      printf("\n");
+    // test IO
+    cout << grid[7][10] << endl;
+
+    // read an empty line
+    int l;
+    cin >> l;
+    cout << l << endl;
+
+    // char temp;
+    // cin >> temp;
+    // getchar();
+
+    char words[l][n];
+    char temp[n];
+    cin.getline(temp, n);
+    // string tmp;
+    for (int i = 0; i < l; i++) {
+        cin.getline(words[i], n);
+        cout << words[i] << endl;
     }
 
-    scanf("%d", l);
-    printf("%d\n", l);
-
-  }
-
-  fclose(stdin);
-  fclose(stdout);
-  return 0;
+    fclose(stdin);
+    // fclose(stdout);
+    return 0;
 }
-;
