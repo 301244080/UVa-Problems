@@ -279,7 +279,7 @@ void Main()
 
 int main()
 {
-	freopen("in","r",stdin);
+	freopen("10196.in","r",stdin);
 
 	game_num = 0;
 	while (Init())
