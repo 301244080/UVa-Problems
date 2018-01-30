@@ -1,4 +1,11 @@
-#include<stdio.h>
+#include<cstdio>
+#include<cstring>
+#include<iostream>
+#include<algorithm>
+using namespace std;
+
 int main() {
-  printf("hello world, hahahahahaha\n");
+  int a = 1;
+  char c = a - 1 + 'a';
+  cout << c << endl;
 }

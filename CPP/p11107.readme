@@ -1,1 +1,2 @@
-This question is to find the longest common prefix
+This question is to find the largest string that appears in more than 1/2 DNAs
+如果有一个连续的height段超过了一半的次数，就是可行的
