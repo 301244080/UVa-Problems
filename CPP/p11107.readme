@@ -1,2 +1,43 @@
 This question is to find the largest string that appears in more than 1/2 DNAs
-如果有一个连续的height段超过了一半的次数，就是可行的
+
+Data structure:
+SuffixArray struct is used:
+s[]: the original string from putting all DNA strings together, an used char is added between each pair of DNAs. a '0' is added to the end of this string.
+sa[]: Suffix array, sa[i] means starting index of ith ranking suffix
+rank[]: rank[sa[i]] = i, rank[i] means the ranking of "the suffix starting from ith index" in sa[]
+height[]: height[i] = LCP of sa[i] and sa[i-1]
+idx: idx[i] = the actual character of index i
+n: number of words
+
+algorithm:
+
+Concepts I used:
+To find the answer:
+LCP(i, j) = min{height[k] | i + 1 <= k <= j}
+
+To build the suffix array:
+H[i]: Height[Rank[i]] = LCP(s[i], s[sa[rank[i]-1]])
+LCP of "the suffix starting from index i" & "the suffix that is ranked right before it"
+H[i] >= H[i-1] - 1
+
+Basic idea:
+we are finding the largest length such that in height[] a range of [L, R) satisfies:
+    1. for i in [L, R), height[i] <= length
+    2. for range [L, R) of sa[], more than half of DNAs are using that LCA
+    3. 2 can be achieved by checking the how many different starting indexes is included in that range of sa[]
+
+1. put all DNAs together in s[], put one never-used character between any two DNAs, put 0 at the end of the whole strings
+2. build a suffix array and height array based on s[]
+3. perform a binary search that is look for the largest length that satisfies the condition described above
+        a. if current length satisfies the condition, look for longer lengths
+        b. if current length doesn't satisfy the condition, look for shorter lengths
+        e.g. "nnnnnnnnssssssssssssssssssnnnnnnnnnn" means all different lengths we can have for a sa[]
+            n: lengths that doesn't satisfy the condition
+            s: length that satisfies the condition
+            we are looking for the last s
+
+
+把这些字符串接起来，拼接部分用一个不会出现的不重复的字符，
+然后求这个长串的后缀数组，利用height数组去进行二分求解，
+二分的判断里面如果有一个连续height段超过了一半次数，那么就是可行的，
+如果所有连续段都没有出现超过一半，就是不可行的

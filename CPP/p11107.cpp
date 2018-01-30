@@ -18,15 +18,17 @@ struct SuffixArray {
   // clear the whole suffix array, set all chars back to 0
   void clear() { n = 0; memset(sa, 0, sizeof(sa)); }
 
-  // m为最大字符值加1。调用之前需设置好s和n
   // m is the largest char + 1, need to set s and n before calling it
-
   void build_sa(int m) {
     int i, *x = t, *y = t2;
+
+    // bucket sort sa
     for(i = 0; i < m; i++) c[i] = 0;
     for(i = 0; i < n; i++) c[x[i] = s[i]]++;
     for(i = 1; i < m; i++) c[i] += c[i-1];
     for(i = n-1; i >= 0; i--) sa[--c[x[i]]] = i;
+
+    // doubling algorithm, k starts from 2^0 to 2^n (2^n > maxlen)
     for(int k = 1; k <= n; k <<= 1) {
       int p = 0;
       for(i = n-k; i < n; i++) y[p++] = i;
@@ -63,24 +65,36 @@ SuffixArray sa;
 int n;
 char word[maxl];
 int idx[maxn];
+
+// flag[i] means if ith string contains a suffix of current string
+// length: 110
 int flag[maxc];
 
-// check if [L,R) is shared by more than 1/2 of DNAs
-bool good(int L, int R) {
+// if in range [L, R) we got more than 2/n starting index
+bool isgood(int L, int R) {
   memset(flag, 0, sizeof(flag));
-  // if(R - L <= n/2) return false;
+  if(R - L <= n/2) return false;
   int cnt = 0;
 
-  // find how many DNAs are sharing this string
+  // check from rank L to R
   for(int i = L; i < R; i++) {
+
+    // x is which word a index belongs to
+    // so we are checking character one by one to find how many different words is contained in that range
+    // if in that range , more than half of words is included
+    // then we found a substring that is shared by more than 2/n DNAs
+
     int x = idx[sa.sa[i]];
     if(x != n && !flag[x]) {
+
       flag[x] = 1; cnt++;
     }
   }
+
   return cnt > n/2;
 }
 
+// print [L, R]
 void print_sub(int L, int R) {
   for(int i = L; i < R; i++)
 
@@ -94,9 +108,13 @@ bool print_solutions(int len, bool print) {
   int L = 0;
   for(int R = 1; R <= sa.n; R++) {
 
-    // 如果走到底了，或者有一个height的值比这个length小，就判断
+    // whenever height[R] < len, we have a new range [L, R)
+    // in [L, R], all i in [L, R) satisfies height[i] >= len
+
     if(R == sa.n || sa.height[R] < len) { // 新开一段
-      if(good(L, R)) {
+
+      // after we got that range, we check
+      if(isgood(L, R)) {
         if(print)
             print_sub(sa.sa[L], sa.sa[L] + len);
         else
@@ -109,6 +127,8 @@ bool print_solutions(int len, bool print) {
 }
 
 void solve(int maxlen) {
+
+  // if we can't find any string that satisfies the condition
   if(!print_solutions(1, false))
     printf("?\n");
   else {
@@ -118,14 +138,20 @@ void solve(int maxlen) {
     while(L < R) {
       M = L + (R-L+1)/2;
 
-      // if we can't find the length that satisfies the codition, try a shorter length by increasing the index of the height array
+      // if we can find a solution, look for longer lengths
       if(print_solutions(M, false))
           L = M;
 
-      // other wise try longer length by decreasing the index of height array
+      // look for shorter lengths
       else
           R = M-1;
     }
+
+    // this should be the longest possible length that we can find
+    // n: length that doesn't satisfy the condition
+    // s: length that satisfies the condition
+    // we are looking for the last s, when is L after that binary search
+    // nnnnnnnnssssssssssssssssssnnnnnnnnnn
     print_solutions(L, true);
   }
 }
@@ -148,6 +174,7 @@ int main() {
     // use maxlen to keep track of the biggest length among all DNAs
     int maxlen = 0;
     sa.clear();
+    memset(idx ,0,sizeof idx);
 
     // start reading one senario
     for(int i = 0; i < n; i++) {
@@ -160,16 +187,15 @@ int main() {
         // mapping a, b, c to 1, 2, 3
         add(word[j] - 'a' + 1, i);
 
-      // adds end character between words
-      add(100 + i, n); // 结束字符
+      // adds seperator character between words
+      add(100 + i, n);
     }
 
     // adds 0 to the end of the array
     add(0, n);
 
     // start solving current senario
-
-    // if it only contains one form
+    // if it only contains one form then just return the DNA itself
     if(n == 1) printf("%s\n", word);
     else {
       sa.build_sa(100 + n);
