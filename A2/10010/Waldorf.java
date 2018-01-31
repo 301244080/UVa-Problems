@@ -32,7 +32,7 @@ public class Waldorf {
         int left = 0, right = length-1;
         int mid;
         
-        while(left < right){
+        while(left <= right){
             mid = (left + right)/2;
             char[] currArr = suffixArr.suffixArray[mid].str.toCharArray();
             if(currArr[0] == target){
@@ -51,6 +51,7 @@ public class Waldorf {
     private static boolean bfs(SuffixArray[] suffixArrays, int rowPos, int rowSize, int colPos, int colSize, char[] wordArr, int wordPos){
         System.out.println(wordArr[wordPos]);
         int topCheckNum = -1, bottomCheckNum = -1 , leftCheckNum = -1, rightCheckNum = -1;
+        System.out.println(rowPos + " col: " + colPos + " char: " + wordArr[wordPos-1]);
         if(wordPos < wordArr.length){
             // check top line
             if(rowPos-1 >= 0){
@@ -61,30 +62,30 @@ public class Waldorf {
                 }
             }
             // check bottom line
-            else if(rowPos+1 < rowSize){
+            if(rowPos+1 < rowSize){
                 bottomCheckNum = binarySearch(suffixArrays[rowPos+1], colSize, wordArr[wordPos]);
                 if(bottomCheckNum == colPos-1 || bottomCheckNum == colPos || bottomCheckNum == colPos+1 ){
-                    System.out.println("bottom");
-                    if(bfs(suffixArrays, rowPos+1, rowSize, bottomCheckNum, colSize, wordArr, wordPos +1)) return true;
+                    if(bfs(suffixArrays, rowPos+1, rowSize, bottomCheckNum, colSize, wordArr, wordPos+1)) return true;
                 }
             }
             // check left
-            else if(colPos-1 >= 0){
+            if(colPos-1 >= 0){
                 leftCheckNum = binarySearch(suffixArrays[rowPos], colSize, wordArr[wordPos]);
                 if(leftCheckNum == colPos-1){
-                    System.out.println("left");
                     if(bfs(suffixArrays,rowPos, rowSize, leftCheckNum,colSize,wordArr, wordPos+1)) return true;
                 }
             }
             // check right
-            else if(colPos+1 < colSize){
+            if(colPos+1 < colSize){
                 rightCheckNum = binarySearch(suffixArrays[rowPos],colSize,wordArr[wordPos]);
                 if(rightCheckNum == colPos +1){
-                    System.out.println("right");
                     if(bfs(suffixArrays,rowPos,rowSize,rightCheckNum,colSize,wordArr,wordPos+1)) return true;
                 }
             }
         }
+
+        // int res = binarySearch(suffixArrays[6],colSize, 'r');
+        // System.out.println(res);
         return false;
     }
 
@@ -98,7 +99,6 @@ public class Waldorf {
         while(rowPos< rowSize && rowPos >=0 && wordPos >=0 && wordPos<wordArr.length){
             res[0] = rowPos;
             currRes = binarySearch(suffixArrays[rowPos],colSize,wordArr[wordPos]);
-
             if( currRes!= -1){
                 res[1] = currRes;
                 int colPos = res[1];
@@ -143,7 +143,7 @@ public class Waldorf {
                     
 
                     // print result
-                    // System.out.println(location[0] + " " + location[1]);
+                    System.out.println(location[0] + " " + location[1]);
 
                 }
 
