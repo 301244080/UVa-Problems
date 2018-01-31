@@ -3,66 +3,67 @@
 #include <cstring>
 #include <cstdio>
 #include <string>
-#include <sstream>      // std::stringstream, std::stringbuf
+#include <algorithm>
 
 using namespace std;
 
-// int dx[] = {1, -1, 0, 0, -1, 1, 1, -1};
-// int dy[] = {1, -1, 1, -1, 0, 0, -1, 1};
 int  dxy[8][2] = {1,0,0,1,-1,0,0,-1,1,1,1,-1,-1,1,-1,-1};
 char text[52][52];
 char word[20][52];
 int positionX, positionY;
 int s[400];
 
-
-const int maxn = 50 * 8;
-
-struct SuffixArray {
-  int s[maxn];      // original char array (the last char must be 0)
-  int sa[maxn];     // suffix array
-  int rank[maxn];   // rank array. rank[0] = n-1, which is the last char
-  int t[maxn], t2[maxn], c[maxn]; // helper arrays
-  int n; // number of chars
-
-  // clear the whole suffix array, set all chars back to 0
-  void clear() { n = 0; memset(sa, 0, sizeof(sa)); }
-
-  // m is the largest char + 1, need to set s and n before calling it
-  void build_sa(int m) {
-    int i, *x = t, *y = t2;
-
-    // bucket sort sa
-    for(i = 0; i < m; i++) c[i] = 0;
-    for(i = 0; i < n; i++) c[x[i] = s[i]]++;
-    for(i = 1; i < m; i++) c[i] += c[i-1];
-    for(i = n-1; i >= 0; i--) sa[--c[x[i]]] = i;
-
-    // doubling algorithm, k starts from 2^0 to 2^n (2^n > maxlen)
-    for(int k = 1; k <= n; k <<= 1) {
-      int p = 0;
-      for(i = n-k; i < n; i++) y[p++] = i;
-      for(i = 0; i < n; i++) if(sa[i] >= k) y[p++] = sa[i]-k;
-      for(i = 0; i < m; i++) c[i] = 0;
-      for(i = 0; i < n; i++) c[x[y[i]]]++;
-      for(i = 0; i < m; i++) c[i] += c[i-1];
-      for(i = n-1; i >= 0; i--) sa[--c[x[y[i]]]] = y[i];
-      swap(x, y);
-      p = 1; x[sa[0]] = 0;
-      for(i = 1; i < n; i++)
-        x[sa[i]] = y[sa[i-1]]==y[sa[i]] && y[sa[i-1]+k]==y[sa[i]+k] ? p-1 : p++;
-      if(p >= n) break;
-      m = p;
-    }
-  }
-
-  void find(const char* word, int lb, int ub) {
-      int m = strlen(word);
-
-  }
-
-
+struct suffix {
+    int index;
+    char* suff;
 };
+
+// compare two suffixes
+int cmp(struct suffix a, struct suffix b) {
+    return strcmp(a.suff, b.suff) < 0 ? 1 : 0;
+}
+
+// build suffix arrays
+// int* buildSuffixArray(char* txt, int n) {
+//     struct suffix suffixes[n];
+//
+//     for (int i = 0; i < n; i++) {
+//         suffixes[i].index = i;
+//         suffixes[i].suff = (txt + i);
+//     }
+//
+//     sort(suffixes, suffixes + n, cmp);
+//
+//     int* suffixArr = new int[n];
+//     for (int i = 0; i < n; i++) {
+//         suffixArr[i] = suffixes[i].index;
+//     }
+//
+//     return suffixArr;
+// }
+
+// void searchSA(char *pat, char* txt, int* suffArr, int n) {
+//     int m = strlen(pat);
+//
+//     int l = 0, r = n - 1;
+//     while (l <= r) {
+//         int mid = l + (r - 1) / 2;
+//         int res = strncmp(pat, txt + suffArr[mid], m);
+//
+//         if (res == 0) {
+//             printf("Pattern found at index: %d\n", suffArr[mid]);
+//             return;
+//         }
+//
+//         if (res < 0) r = mid - 1;
+//         else l = mid + 1;
+//     }
+//
+//     printf("%s\n", "Pattern not found");
+// }
+
+
+
 
 void testIO(char text[52][52], char word[20][52], int n, int m, int l) {
     // test I/O
@@ -83,11 +84,7 @@ void testIO(char text[52][52], char word[20][52], int n, int m, int l) {
     }
 }
 
-SuffixArray sa;
 
-void add(int ch) {
-    sa.s[sa.n++] = ch;
-}
 
 void findInSuffixArray(char *buf, int n, int m, int l) {
 
@@ -100,19 +97,10 @@ bool invalid(int xx, int yy, int m, int n) {
 }
 
 void search(char* buf, int n, int m, int count) {
-    sa.clear();
-    memset(s, 0, sizeof(s));
-    for (int i = 0; i < count; i ++) {
-        add(buf[i] - 'a' + 1);
-        printf("%d ",buf[i] - 'a' + 1);
-    }
-    add(0);
-    sa.build_sa(28);
-    printf("%s\n", "printing sa");
-    for (int i = 0; i <= count; i++) {
-        printf("sa[%d]: %d ", i, sa.sa[i]);
-    }
-    printf("\n");
+
+    printf("%s\n", "Building suffix array");
+    // int* suffixArr = buildSuffixArray(buf, count);
+    // searchSA(word[0], buf, suffixArr, count);
 }
 
 void solve(int n, int m, int l) {
@@ -227,7 +215,7 @@ int main(){
         testIO(text, word, n, m, l);
 
         printf("%s\n","start solving problem...");
-        solve(n, m, l);
+        // solve(n, m, l);
 
     }
 }
