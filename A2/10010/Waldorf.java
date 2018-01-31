@@ -28,64 +28,87 @@ public class Waldorf {
         }
     }
 
-    public static int binarySearch(SuffixArray suffixArr, int length, char target){
+    public static List<Integer> binarySearch(SuffixArray suffixArr, int length, char target){
         int left = 0, right = length-1;
         int mid;
-        
+        int start, end;
+        List<Integer> res = new LinkedList<>();
+        res.add(-1);
+
         while(left <= right){
             mid = (left + right)/2;
-            char[] currArr = suffixArr.suffixArray[mid].str.toCharArray();
-            if(currArr[0] == target){
-                return suffixArr.suffixArray[mid].index;
+            char currChar = suffixArr.suffixArray[mid].str.charAt(0);
+            if(currChar == target){
+                res.remove(0);
+                start = mid;
+                end = mid;
+                while(start>0 && suffixArr.suffixArray[start-1].str.charAt(0) == target){
+                    start--;
+                }
+                while(end < length-1 && suffixArr.suffixArray[end+1].str.charAt(0) == target ){
+                    end++;
+                }
+
+                for(int i=start;i<=end;i++){
+                    res.add(suffixArr.suffixArray[i].index);
+                }
+                return res;
             }
-            else if(currArr[0] < target){
+            else if(currChar < target){
                 left = mid +1;
             }
             else{
                 right = mid-1;
             }
         }
-        return -1;
+        return res;
     }
 
     private static boolean bfs(SuffixArray[] suffixArrays, int rowPos, int rowSize, int colPos, int colSize, char[] wordArr, int wordPos){
-        System.out.println(wordArr[wordPos]);
-        int topCheckNum = -1, bottomCheckNum = -1 , leftCheckNum = -1, rightCheckNum = -1;
+        List<Integer> topCheckNums, bottomCheckNums, leftCheckNums, rightCheckNums;
         System.out.println(rowPos + " col: " + colPos + " char: " + wordArr[wordPos-1]);
         if(wordPos < wordArr.length){
             // check top line
             if(rowPos-1 >= 0){
-                topCheckNum = binarySearch(suffixArrays[rowPos-1],colSize,wordArr[wordPos]);
-                // check top right, top left, top 
-                if(topCheckNum == colPos-1 || topCheckNum == colPos || topCheckNum == colPos+1){
-                    if(bfs(suffixArrays, rowPos-1, rowSize, topCheckNum, colSize, wordArr,wordPos+1)) return true;
+                topCheckNums = binarySearch(suffixArrays[rowPos-1],colSize,wordArr[wordPos]);
+                for(int topCheckNum:topCheckNums){
+                    // check top right, top left, top
+                    if(topCheckNum == colPos-1 || topCheckNum == colPos || topCheckNum == colPos+1){
+                        if(bfs(suffixArrays, rowPos-1, rowSize, topCheckNum, colSize, wordArr,wordPos+1)) return true;
+                    }
                 }
+
             }
             // check bottom line
             if(rowPos+1 < rowSize){
-                bottomCheckNum = binarySearch(suffixArrays[rowPos+1], colSize, wordArr[wordPos]);
-                if(bottomCheckNum == colPos-1 || bottomCheckNum == colPos || bottomCheckNum == colPos+1 ){
-                    if(bfs(suffixArrays, rowPos+1, rowSize, bottomCheckNum, colSize, wordArr, wordPos+1)) return true;
+                bottomCheckNums = binarySearch(suffixArrays[rowPos+1], colSize, wordArr[wordPos]);
+                for(int bottomCheckNum: bottomCheckNums){
+                    if(bottomCheckNum == colPos-1 || bottomCheckNum == colPos || bottomCheckNum == colPos+1 ){
+                        if(bfs(suffixArrays, rowPos+1, rowSize, bottomCheckNum, colSize, wordArr, wordPos+1)) return true;
+                    }
                 }
+
             }
             // check left
             if(colPos-1 >= 0){
-                leftCheckNum = binarySearch(suffixArrays[rowPos], colSize, wordArr[wordPos]);
-                if(leftCheckNum == colPos-1){
-                    if(bfs(suffixArrays,rowPos, rowSize, leftCheckNum,colSize,wordArr, wordPos+1)) return true;
+                leftCheckNums = binarySearch(suffixArrays[rowPos], colSize, wordArr[wordPos]);
+                for(int leftCheckNum:leftCheckNums){
+                    if(leftCheckNum == colPos-1){
+                        if(bfs(suffixArrays,rowPos, rowSize, leftCheckNum,colSize,wordArr, wordPos+1)) return true;
+                    }
                 }
+                
             }
             // check right
             if(colPos+1 < colSize){
-                rightCheckNum = binarySearch(suffixArrays[rowPos],colSize,wordArr[wordPos]);
-                if(rightCheckNum == colPos +1){
-                    if(bfs(suffixArrays,rowPos,rowSize,rightCheckNum,colSize,wordArr,wordPos+1)) return true;
+                rightCheckNums = binarySearch(suffixArrays[rowPos],colSize,wordArr[wordPos]);
+                for(int rightCheckNum:rightCheckNums){
+                    if(rightCheckNum == colPos +1){
+                        if(bfs(suffixArrays,rowPos,rowSize,rightCheckNum,colSize,wordArr,wordPos+1)) return true;
+                    }
                 }
             }
         }
-
-        // int res = binarySearch(suffixArrays[6],colSize, 'r');
-        // System.out.println(res);
         return false;
     }
 
@@ -93,17 +116,19 @@ public class Waldorf {
         int[] res = new int[2];
         char[] wordArr = word.toCharArray();
         int wordPos=0, rowPos = 0;
-        int currRes;
+        List<Integer> currRes = new LinkedList<>();
         // search word in word array
         // binary search for find start char
         while(rowPos< rowSize && rowPos >=0 && wordPos >=0 && wordPos<wordArr.length){
             res[0] = rowPos;
             currRes = binarySearch(suffixArrays[rowPos],colSize,wordArr[wordPos]);
-            if( currRes!= -1){
-                res[1] = currRes;
-                int colPos = res[1];
-                // bfs to find the word
-                if(bfs(suffixArrays, rowPos, rowSize, colPos, colSize, wordArr, wordPos+1)) return res;
+            if( currRes.get(0)!= -1){
+                for(int i=0; i<currRes.size();i++){
+                    res[1] = currRes.get(i);
+                    int colPos = res[1];
+                    // bfs to find the word 
+                    if(bfs(suffixArrays, rowPos, rowSize, colPos, colSize, wordArr, wordPos+1)) return res;
+                }
             }
             rowPos++;
         }
