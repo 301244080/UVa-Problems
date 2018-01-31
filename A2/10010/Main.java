@@ -1,15 +1,13 @@
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.*;
-import java.security.cert.TrustAnchor;
 import java.util.*;
 
 
 
 
-public class Waldorf {
+public class Main {
     static int[] location = new int[2];
-    static int[] res = new int[2];
 
     static class SuffixArrayEle {
         int index;
@@ -72,26 +70,14 @@ public class Waldorf {
     private static boolean bfs(SuffixArray[] suffixArrays, int rowPos, int rowSize, int colPos, int colSize, char[] wordArr, int wordPos){
         List<Integer> topCheckNums, bottomCheckNums, leftCheckNums, rightCheckNums;
         // System.out.println(rowPos + " col: " + colPos + " char: " + wordArr[wordPos-1]);
-        if(wordPos < wordArr.length && wordPos >0){
-            // System.out.println(rowPos + " col: " + colPos + " char: " + wordArr[wordPos-1]);
+        if(wordPos < wordArr.length){
             // check top line
             if(rowPos-1 >= 0){
                 topCheckNums = binarySearch(suffixArrays[rowPos-1],colSize,wordArr[wordPos]);
                 for(int topCheckNum:topCheckNums){
                     // check top right, top left, top
-                    if(topCheckNum == colPos || topCheckNum == colPos-1){ 
+                    if(topCheckNum == colPos || topCheckNum == colPos+1 ||topCheckNum == colPos-1){ 
                         if(bfs(suffixArrays, rowPos-1, rowSize, topCheckNum, colSize, wordArr,wordPos+1)) return true;
-                    }
-                    else if(topCheckNum == colPos+1){
-                        if(bfs(suffixArrays, rowPos, rowSize, topCheckNum, colSize, wordArr,wordPos-1)){
-                            // System.out.println(wordArr[wordPos-1]);
-                            // if(wordPos == 1){
-                            //     res[0] = rowPos;
-                            //     res[1] = topCheckNum;
-                            // }
-                            return true;
-                        } 
-                        else if(bfs(suffixArrays, rowPos-1, rowSize, topCheckNum, colSize, wordArr,wordPos+1)) return true;
                     }
                 }
 
@@ -126,13 +112,14 @@ public class Waldorf {
                 }
             }
         }
-        // else if (wordPos==0) {
-            
-        // }
+        else{
+            return true;
+        }
         return false;
     }
 
     private static int[] search(String word, SuffixArray[] suffixArrays, int rowSize, int colSize){
+        int[] res = new int[2];
         char[] wordArr = word.toCharArray();
         int wordPos=0, rowPos = 0;
         List<Integer> currRes = new LinkedList<>();
