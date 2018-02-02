@@ -14,6 +14,8 @@ char text[52][52];
 char word[20][52];
 int positionX, positionY;
 int s[400];
+char buf[52];
+
 
 
 const int maxn = 50 * 8;
@@ -56,12 +58,6 @@ struct SuffixArray {
     }
   }
 
-  void find(const char* word, int lb, int ub) {
-      int m = strlen(word);
-
-  }
-
-
 };
 
 void testIO(char text[52][52], char word[20][52], int n, int m, int l) {
@@ -99,24 +95,64 @@ bool invalid(int xx, int yy, int m, int n) {
     return false;
 }
 
+int cmp_suffix(char *pattern, int p, int m) {
+    int res = strncmp(pattern, buf + sa.sa[p], m);
+    printf("checking string diff: %s and %s, p is: %d, res is: %d\n", pattern, buf + sa.sa[p], p, res);
+    return res;
+}
+//在 Suffix Array 数组的(lb, ub) 区间寻找字符串 pattern
+void find(char* pattern, int lb, int ub) {
+        int m = strlen(pattern);
+        printf("m is: %d\n", m);
+        if(cmp_suffix(pattern, lb, m) < 0) return; //如果当前最小的字典序都大于模版串的字典序，肯定无法匹配
+        if(cmp_suffix(pattern, ub, m) > 0) return; //如果当前最大的字典序都小于模版串的字典序，肯定无法匹配
+        printf("%s\n", "Binary Search starts");
+        while(lb <= ub) {
+            int mid = lb + (ub - lb) / 2;
+            printf("current mid is: %d\n", mid);
+            int res = cmp_suffix(pattern, mid, m);
+            if(!res) {
+                printf("Match! Index: %d\n", sa.sa[mid]);
+                find(pattern, lb, mid - 1); //(lb, mid) 可能还有匹配
+                find(pattern, mid + 1, ub); //(mid, ub) 可能还有匹配
+                return;
+            }
+            if(res < 0) ub = mid - 1; //如果模版串的字典序比后缀 sa[mid] 小，那么解的范围变为 (lb, mid)
+            else lb = mid + 1;    //如果模版串的字典序比后缀 sa[mid] 小，那么解的范围变为 (mid, ub)
+        }
+        printf("%s\n", "no finding!");
+}
+
 void search(char* buf, int n, int m, int count) {
     sa.clear();
     memset(s, 0, sizeof(s));
     for (int i = 0; i < count; i ++) {
         add(buf[i] - 'a' + 1);
-        printf("%d ",buf[i] - 'a' + 1);
+        // printf("%d ",buf[i] - 'a' + 1);
     }
+    // printf("\n");
+
+    // add 0 to the end of string
     add(0);
     sa.build_sa(28);
-    printf("%s\n", "printing sa");
+
+    printf("%s\n", "Printing SA...");
     for (int i = 0; i <= count; i++) {
-        printf("sa[%d]: %d ", i, sa.sa[i]);
+        printf("sa[%d]: %d\n", i, sa.sa[i]);
     }
+    printf("Finding string: %s\n", word[0]);
+    printf("count is: %d\n", count);
+    printf("buf is: %s\n", buf);
+
+    find(word[0], 1, count);
+
     printf("\n");
 }
 
-void solve(int n, int m, int l) {
-    char buf[52];
+
+
+void solve(int n, int m, int l, int minlen) {
+    memset(buf, 0, 52);
     for (int i = 0; i < 1; i++)
         for (int j = 0; j < m; j++) {
             int xx = i, yy = j;
@@ -131,9 +167,10 @@ void solve(int n, int m, int l) {
             }
 
             printf("\n");
-            printf("%s\n", "start searching");
-            search(buf, n, m, count);
-            return;
+            printf("start searching in buf: %s\n", buf);
+            if (count >= minlen)
+                search(buf, n, m, count);
+            // return;
         }
 
     // for (int i = 0; i < 1; i++) {
@@ -227,7 +264,7 @@ int main(){
         testIO(text, word, n, m, l);
 
         printf("%s\n","start solving problem...");
-        solve(n, m, l);
+        solve(n, m, l, minlen);
 
     }
 }
