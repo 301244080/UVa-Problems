@@ -163,9 +163,6 @@ public class Main {
                 // create suffixArray array for words ? or check each word
                 int wordNum =Integer.parseInt(br.readLine());
 
-                
-                StringBuilder sb = new StringBuilder();
-
                 // search word 
                 for(int k=0;k<wordNum;k++){
                     String currWord = br.readLine().toLowerCase();

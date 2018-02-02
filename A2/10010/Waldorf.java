@@ -1,7 +1,6 @@
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.*;
-import java.security.cert.TrustAnchor;
 import java.util.*;
 
 
@@ -84,11 +83,6 @@ public class Waldorf {
                     }
                     else if(topCheckNum == colPos+1){
                         if(bfs(suffixArrays, rowPos, rowSize, topCheckNum, colSize, wordArr,wordPos-1)){
-                            // System.out.println(wordArr[wordPos-1]);
-                            // if(wordPos == 1){
-                            //     res[0] = rowPos;
-                            //     res[1] = topCheckNum;
-                            // }
                             return true;
                         } 
                         else if(bfs(suffixArrays, rowPos-1, rowSize, topCheckNum, colSize, wordArr,wordPos+1)) return true;
@@ -176,9 +170,6 @@ public class Waldorf {
                 // create suffixArray array for words ? or check each word
                 int wordNum =Integer.parseInt(br.readLine());
 
-                
-                StringBuilder sb = new StringBuilder();
-
                 // search word 
                 for(int k=0;k<wordNum;k++){
                     String currWord = br.readLine().toLowerCase();
@@ -190,7 +181,7 @@ public class Waldorf {
                 }
                 if(i<caseNum-1) System.out.println();
             }
-
+            br.close();
 
         } catch (Exception e) {
             //TODO: handle exception
