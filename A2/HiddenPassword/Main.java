@@ -1,71 +1,124 @@
-import java.io.BufferedReader;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.*;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.util.*;
 
+public class Main {
+	public static final int SIZE = 256;
+    static int length;
+	public static int[] suffixArray(CharSequence S) 
+	{
+	    int n = S.length();
+	    Integer[] order = new Integer[n];
+	    for (int i = 0; i < n; i++)
+	      order[i] = n - 1 - i;
 
+	    // stable sort of characters
+	    Arrays.sort(order, (a, b) -> Character.compare(S.charAt(a), S.charAt(b)));
 
-class HiddenPassword{
-    int resPos;
+	    int[] sa = new int[n];
+	    int[] classes = new int[n];
+	    for (int i = 0; i < n; i++) {
+	      sa[i] = order[i];
+	      classes[i] = S.charAt(i);
+	    }
+	    // sa[i] - suffix on i'th position after sorting by first len characters
+	    // classes[i] - equivalence class of the i'th suffix after sorting by first len characters
 
-    class Suffix {
-        int index;
-        String str;
-        Suffix(int i, String s) {
-            index = i;
-            str = s;
-        }
-    }
-    int smallestRotationIndex(String s, int n) {
-	 s += s;
-	 Suffix[] suff = new Suffix[n];
-	 for (int i = 0; i < n; i++) {
-	  suff[i] = new Suffix(i, s.substring(i, i + n));
+	    for (int len = 1; len < n; len *= 2) {
+	      int[] c = classes.clone();
+	      for (int i = 0; i < n; i++) {
+	        // condition sa[i - 1] + len < n simulates 0-symbol at the end of the string
+	        // a separate class is created for each suffix followed by simulated 0-symbol
+	        classes[sa[i]] = i > 0 && c[sa[i - 1]] == c[sa[i]] && sa[i - 1] + len < n && c[sa[i - 1] + len / 2] == c[sa[i] + len / 2] ? classes[sa[i - 1]] : i;
+	      }
+	      // Suffixes are already sorted by first len characters
+	      // Now sort suffixes by first len * 2 characters
+	      int[] cnt = new int[n];
+	      for (int i = 0; i < n; i++)
+	        cnt[i] = i;
+	      int[] s = sa.clone();
+	      for (int i = 0; i < n; i++) {
+	    	  
+	    	//System.out.println(len);
+	        // s[i] - order of suffixes sorted by first len characters
+	        // (s[i] - len) - order of suffixes sorted only by second len characters
+	        int s1 = s[i] - len;
+	        // sort only suffixes of length > len, others are already sorted
+	        if (s1 >= 0)
+	          sa[cnt[classes[s1]]++] = s1;
+	      }
+	    }
+	    return sa;
+	  }
+
+	static int finalResult(int[] suffixArray, int strLen)
+	{
+		
+		CharSequence ans = null;
+		int index[]= new int[strLen*2];
+		int answer=strLen*2;
+		Arrays.fill(index, strLen*3);
+		for(int i=0;i<suffixArray.length;i++)
+		{
+            // for check i is still in original str
+			if(strLen*2-suffixArray[i]>=strLen){
+                answer=suffixArray[i];
+                int j = 1;
+                while(i < strLen*2-1)
+				{
+					if(strLen*2-suffixArray[i+j]>=strLen)
+					{
+						if(answer>suffixArray[i+j])
+						{
+							answer=suffixArray[i+j];
+						}
+						else
+						{
+							return answer;
+						}
+					}
+					else
+					{
+						return answer;
+                    }
+                    j++;
+				}
+            }
+            // System.out.println(SA[i]);
 		}
-	 Arrays.sort(suff, (a, b) -> a.str.compareTo(b.str));
-	 return suff[0].index;
+		return 0;
 	}
 
-    HiddenPassword(String inputStr){
-        String[] orgStrs = inputStr.split(" ");
-        int strLen = Integer.parseInt(orgStrs[0]);
-        // System.out.println(strLen);
-        int newLen = strLen*2;
-        String str = orgStrs[1];
-        String newStr = new String(str + str);
-        // System.out.println(newStr + " " + newStr.length());
-        String[] suffixArray = new String[strLen];
-        String[] sortedSuffix = new String[strLen];
-        resPos = smallestRotationIndex(newStr,newLen);
-    }
 
-
-}
-
-public class Main {
-
-    public static void main(String[] args) throws Exception {
-
-        try
-        {
-            BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
-            StringBuilder resStrBuilder = new StringBuilder();
-            int linesSize = Integer.parseInt(reader.readLine());
-            if(linesSize == 0) resStrBuilder.append("\n");
-            for(int i=0;i<linesSize;i++){
-                String currStr = reader.readLine();
-                HiddenPassword hp = new HiddenPassword(currStr);
-                if(hp.resPos!=-1){
-                    resStrBuilder.append(hp.resPos).append("\n");
-                }
-            }
-            System.out.println(resStrBuilder.toString().trim());
-        }
-        catch (Exception e)
-        {
-          System.err.format("Exception occurred trying to read");
-          e.printStackTrace();
-        }
-    }
-    
+	public static void main(String[] args) throws IOException {
+		StringBuilder output = new StringBuilder();
+		Scanner scanner = new Scanner(new InputStreamReader(System.in));
+		while(true)
+		{
+			int numberOfCase = scanner.nextInt();
+			while(numberOfCase-->0)
+			{
+				int length = scanner.nextInt();
+				String temp=scanner.next();
+				temp=temp+temp;
+				int[] sa1 = suffixArray(temp);
+        		int result=finalResult(sa1,length);
+        		if(numberOfCase==0)
+        		{
+        			output.append(result);
+        		}
+        		else
+        		{
+        			output.append(result).append("\n");
+        		}
+        		
+			}
+			break;
+		}
+        String result2 = output.toString();
+		System.out.println(result2);
+		
+		scanner.close();
+	}
 }
