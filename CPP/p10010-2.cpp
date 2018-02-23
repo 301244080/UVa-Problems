@@ -13,13 +13,20 @@ int  dxy[8][2] = {1,0,0,1,-1,0,0,-1,1,1,1,-1,-1,1,-1,-1};
 char text[52][52];
 char word[20][52];
 int positionX, positionY;
-int s[2502];
-char buf[2502];
+int s[20020];
+char buf[20020];
 int row[52];
 int res[52][2];
 
+struct point {
+    char c;
+    int x;
+    int y;
+};
 
-const int maxn = 2502;
+point points[20020];
+
+const int maxn = 20020;
 
 struct SuffixArray {
   int s[maxn];      // original char array (the last char must be 0)
@@ -102,23 +109,17 @@ int cmp_suffix(char *pattern, int p, int m) {
     return res;
 }
 
-void findxy(int n, int m, int k, int wordnum) {
-    printf("k: %d, n: %d, m: %d\n", k, n, m);
-    int diff = k % (m-1);
-    k -= diff;
-    printf("k is changed to: %d\n", k);
-    int y = k%m;
-    int x = (k - y) / m;
-    printf("Candidate: %d %d\n", x, y);
-    printf("res[%d]: %d %d\n", wordnum, res[wordnum][0], res[wordnum][1]);
+void report(int index, int wordnum) {
+    int x = points[index].x;
+    int y = points[index].y;
     if (x < res[wordnum][0]) {
-        printf("Updating solution: %d %d\n", x, y);
+        // printf("Updating solution: %d %d\n", x, y);
         res[wordnum][0] = x;
         res[wordnum][1] = y;
     }
     else if (x == res[wordnum][0])
         if (y <= res[wordnum][1]) {
-            printf("Updating solution: %d %d\n", x, y);
+            // printf("Updating solution: %d %d\n", x, y);
             res[wordnum][0] = x;
             res[wordnum][1] = y;
         }
@@ -133,15 +134,15 @@ void find(char* pattern, int lb, int ub, int wordnum, int n, int m) {
 
         // printf("%s\n", "checking the highest string");
         if(cmp_suffix(pattern, ub, m) > 0) return; //如果当前最大的字典序都小于模版串的字典序，肯定无法匹配
-        printf("%s\n", "Binary Search starts");
+        // printf("%s\n", "Binary Search starts");
         while(lb <= ub) {
             int mid = lb + (ub - lb) / 2;
-            printf("current mid is: %d\n", mid);
+            // printf("current mid is: %d\n", mid);
             int res = cmp_suffix(pattern, mid, len);
             if(!res) {
                 int index = sa.sa[mid];
-                printf("Match! Index: %d\n", index);
-                findxy(n, m, index, wordnum);
+                // printf("Match! Index: %d\n", index);
+                report(index, wordnum);
                 find(pattern, mid + 1, ub, wordnum, n, m); //(mid, ub) 可能还有匹配
                 find(pattern, lb, mid - 1, wordnum, n, m); //(lb, mid) 可能还有匹配
                 return;
@@ -149,173 +150,207 @@ void find(char* pattern, int lb, int ub, int wordnum, int n, int m) {
             if(res < 0) ub = mid - 1; //如果模版串的字典序比后缀 sa[mid] 小，那么解的范围变为 (lb, mid)
             else lb = mid + 1;    //如果模版串的字典序比后缀 sa[mid] 小，那么解的范围变为 (mid, ub)
         }
-        printf("%s\n", "no finding!");
+        // printf("%s\n", "no finding!");
+}
+
+void load(int i, int j, int& count) {
+    char c = text[i][j];
+    points[count].c = c;
+    points[count].x = i; points[count].y = j;
+    buf[count++] = c;
+    // printf("buf[%d]: %c\n", count - 1, buf[count-1]);
+    add(c - 'a' + 1);
+}
+
+void addSeperator(int& count) {
+    points[count].c = '~';
+    buf[count++] = '~';
+    // printf("buf[%d]: %c\n", count - 1, buf[count-1]);
+    add('~' - 'a' + 1);
 }
 
 void solve(int n, int m, int l, int minlen) {
 
-    // case 1
-    // ->
+    // right
     memset(buf, 0, sizeof(buf));
     int count = 0;
     sa.clear();
     for (int i = 0; i < n; i++) {
-        for (int j = 0; j < m; j++) {
-            char c = text[i][j];
-            buf[count++] = c;
-            printf("buf[%d]: %c\n", count - 1, buf[count-1]);
-            add(c - 'a' + 1);
-        }
-        buf[count++] = '~';
-        printf("buf[%d]: %c\n", count - 1, buf[count-1]);
-        add('~' - 'a' + 1);
-    }
-    add(0);
-    printf("\n");
-    sa.build_sa(80);
-    for (int i = 0; i < sa.n; i++) {
-        printf("%d ",sa.s[i]);
-    }
-    printf("\n");
-    printf("%s\n", "Printing SA...");
-    for (int i = 0; i <= count; i++) {
-        printf("sa[%d]: %d, buf[%d] is: %c\n", i, sa.sa[i], sa.sa[i], buf[sa.sa[i]]);
-    }
-    printf("\n");
-    printf("%d\n", l);
-    for (int i = 0; i < l; i++) {
-        printf("%s\n", word[i]);
-        // printf("starting search with count: %d, and word: %s\n", word[i]);
-        find(word[i], 1, count, i, n, m);
-        printf("\n\n");
+        for (int j = 0; j < m; j++)
+            load(i, j, count);
+        addSeperator(count);
     }
 
-    // case 2
-    // <-
-    memset(buf, 0, sizeof(buf));
-    count = 0;
-    sa.clear();
+
+    // left
     for (int i = 0; i < n; i++) {
-        for (int j = m - 1; j >= m; j--) {
-            char c = text[i][j];
-            buf[count++] = c;
-            printf("buf[%d]: %c\n", count - 1, buf[count-1]);
-            add(c - 'a' + 1);
-        }
-        buf[count++] = '~';
-        printf("buf[%d]: %c\n", count - 1, buf[count-1]);
-        add('~' - 'a' + 1);
-    }
-    add(0);
-    printf("\n");
-    sa.build_sa(80);
-    for (int i = 0; i < sa.n; i++) {
-        printf("%d ",sa.s[i]);
-    }
-    printf("\n");
-    printf("%s\n", "Printing SA...");
-    for (int i = 0; i <= count; i++) {
-        printf("sa[%d]: %d, buf[%d] is: %c\n", i, sa.sa[i], sa.sa[i], buf[sa.sa[i]]);
-    }
-    printf("\n");
-    printf("%d\n", l);
-    for (int i = 0; i < l; i++) {
-        printf("%s\n", word[i]);
-        // printf("starting search with count: %d, and word: %s\n", word[i]);
-        find(word[i], 1, count, i, n, m);
-        printf("\n\n");
+        for (int j = m-1; j >= 0; j--)
+            load(i, j, count);
+        addSeperator(count);
     }
 
-    // case 4
-    // buttom-up
-    memset(buf, 0, sizeof(buf));
-    count = 0;
-    sa.clear();
+    // down
     for (int i = 0; i < m; i++) {
-        for (int j = n - 1; j >= n; j--) {
-            char c = text[i][j];
-            buf[count++] = c;
-            printf("buf[%d]: %c\n", count - 1, buf[count-1]);
-            add(c - 'a' + 1);
-        }
-        buf[count++] = '~';
-        printf("buf[%d]: %c\n", count - 1, buf[count-1]);
-        add('~' - 'a' + 1);
-    }
-    add(0);
-    printf("\n");
-    sa.build_sa(80);
-    for (int i = 0; i < sa.n; i++) {
-        printf("%d ",sa.s[i]);
-    }
-    printf("\n");
-    printf("%s\n", "Printing SA...");
-    for (int i = 0; i <= count; i++) {
-        printf("sa[%d]: %d, buf[%d] is: %c\n", i, sa.sa[i], sa.sa[i], buf[sa.sa[i]]);
-    }
-    printf("\n");
-    printf("%d\n", l);
-    for (int i = 0; i < l; i++) {
-        printf("%s\n", word[i]);
-        // printf("starting search with count: %d, and word: %s\n", word[i]);
-        find(word[i], 1, count, i, n, m);
-        printf("\n\n");
+        for (int j = 0; j < n; j++)
+            load(j, i, count);
+        addSeperator(count);
     }
 
-    // case 5
-    memset(buf, 0, sizeof(buf));
-    count = 0;
-    sa.clear();
+    // up
+    for (int i = 0; i < m; i ++) {
+        for (int j = n - 1; j >= 0; j--)
+            load(j, i, count);
+        addSeperator(count);
+    }
+
+    // right down
+    for (int i = 0; i < n; i++) {
+        int xx = i, yy = 0;
+        while (1) {
+            load(xx, yy, count);
+            xx += 1;
+            yy += 1;
+            if (invalid(xx, yy, m, n))
+                break;
+        }
+        addSeperator(count);
+    }
     for (int i = 0; i < m; i++) {
-        for (int j = 0; j < n; j++) {
-            char c = text[i][j];
-            buf[count++] = c;
-            printf("buf[%d]: %c\n", count - 1, buf[count-1]);
-            add(c - 'a' + 1);
+        int xx = 0, yy = i;
+        while (1) {
+            load(xx, yy, count);
+            xx += 1;
+            yy += 1;
+            if (invalid(xx, yy, m, n))
+                break;
         }
-        buf[count++] = '~';
-        printf("buf[%d]: %c\n", count - 1, buf[count-1]);
-        add('~' - 'a' + 1);
+        addSeperator(count);
     }
+
+    // left up
+    for (int i = n - 1; i >= 0; i--) {
+        int xx = i, yy = m - 1;
+        while (1) {
+            load(xx, yy, count);
+            xx -= 1;
+            yy -= 1;
+            if (invalid(xx, yy, m, n))
+                break;
+        }
+        addSeperator(count);
+    }
+    for (int i = m - 1; i >= 0; i--) {
+        int xx = n - 1, yy = i;
+        while (1) {
+            load(xx, yy, count);
+            xx -= 1;
+            yy -= 1;
+            if (invalid(xx, yy, m, n))
+                break;
+        }
+        addSeperator(count);
+    }
+
+    // right up
+    for (int i = n - 1; i >= 0; i--) {
+        int xx = i, yy = 0;
+        while (1) {
+            load(xx, yy, count);
+            xx -= 1;
+            yy += 1;
+            if (invalid(xx, yy, m, n))
+                break;
+        }
+        addSeperator(count);
+    }
+    for (int i = 0; i < m; i++) {
+        int xx = n - 1, yy = i;
+        while (1) {
+            load(xx, yy, count);
+            xx -= 1;
+            yy += 1;
+            if (invalid(xx, yy, m, n))
+                break;
+        }
+        addSeperator(count);
+    }
+
+    // left down
+    for (int i = 0; i < n; i++) {
+        int xx = i, yy = m - 1;
+        while (1) {
+            load(xx, yy, count);
+            xx += 1;
+            yy -= 1;
+            if (invalid(xx, yy, m, n))
+                break;
+        }
+        addSeperator(count);
+    }
+    for (int i = m - 1; i >= 0; i--) {
+        int xx = 0, yy = i;
+        while (1) {
+            load(xx, yy, count);
+            xx += 1;
+            yy -= 1;
+            if (invalid(xx, yy, m, n))
+                break;
+        }
+        addSeperator(count);
+    }
+
+
+
+    // After loading all senarios
     add(0);
-    printf("\n");
+    // printf("\n");
     sa.build_sa(80);
     for (int i = 0; i < sa.n; i++) {
-        printf("%d ",sa.s[i]);
+        // printf("%d ",sa.s[i]);
     }
-    printf("\n");
-    printf("%s\n", "Printing SA...");
+    // printf("\n");
+    // printf("%s\n", "Printing SA...");
     for (int i = 0; i <= count; i++) {
-        printf("sa[%d]: %d, buf[%d] is: %c\n", i, sa.sa[i], sa.sa[i], buf[sa.sa[i]]);
+        // printf("sa[%d]: %d, buf[%d] is: %c\n", i, sa.sa[i], sa.sa[i], buf[sa.sa[i]]);
     }
-    printf("\n");
-    printf("%d\n", l);
+    // printf("\n");
+    // printf("%d\n", l);
     for (int i = 0; i < l; i++) {
-        printf("%s\n", word[i]);
-        // printf("starting search with count: %d, and word: %s\n", word[i]);
+        // printf("%s\n", word[i]);
         find(word[i], 1, count, i, n, m);
-        printf("\n\n");
+        // printf("\n\n");
     }
-
-
 }
 
 
+void init() {
+    for (int i = 0; i < 52; i++)
+        for (int j = 0; j < 2; j++)
+            res[i][j] = 100;
+}
 
+void print_solution(int l) {
+    for (int i = 0; i < l; i++) {
+        if (res[i][0] != 100 && res[i][1] != 100) {
+            printf("%d %d\n", res[i][0] + 1, res[i][1] + 1);
+        }
+    }
+    printf("\n");
+}
 
 int main(){
     int T, n, m, l;
-    freopen("10010.in", "r", stdin);
+    freopen("10010_test.in", "r", stdin);
     scanf("%d", &T);
 
-    for (int i = 0; i < 52; i++)
-        for (int j = 0; j < 2; j++)
-            res[i][j] = 52;
+
     // while (!scanf("%d", &T))
     while (T--) {
+
+
         getchar();
         scanf("%d%d", &n, &m);
-
+        init();
         for (int i = 0; i < n; i++)
             scanf("%s", text[i]);
 
@@ -340,11 +375,13 @@ int main(){
                 minlen = j;
         }
 
-        printf("Minimum Length: %d\n", minlen);
-        testIO(text, word, n, m, l);
-
-        printf("%s\n","start solving problem...");
+        // printf("Minimum Length: %d\n", minlen);
+        // testIO(text, word, n, m, l);
+        //
+        // printf("%s\n","start solving problem...");
         solve(n, m, l, minlen);
+
+        print_solution(l);
 
     }
 }
