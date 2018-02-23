@@ -1,0 +1,8 @@
+A <= B <= C
+badness: (A-B)^2
+
+1. sort all chopsticks by their lengths, from the longest to the shortest
+dp[i][j] means the minimum total badness we can get for the first i chopsticks and j people
+For the ith chopsticks we have 2 options:
+    if we pick it for the jth person, dp[i][j] = dp[i-2][j-1] + (c[i] - c[i-1])^2, because we have to pick (i-1)th chopstick if we pick ith chopstick first.
+    if we don't pick it for the jth person, dp[i][j] = dp[i-1][j]
