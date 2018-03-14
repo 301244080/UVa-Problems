@@ -6,46 +6,29 @@ public class Main{
     public static int clockSize;
     public static int maxNum;
     static int count;
-    public static Boolean isValid(List<Integer> res, int currSize){
-        if(currSize > 2){
-            if((res.get(currSize-1)+res.get(currSize-2)+res.get(currSize-3)) > maxNum){
-                return false;
-            }
-        }
-        return true;
-    }
-    public static void permute(int[] nums) {
-        
-        List<Integer> permutation = new ArrayList<>();
-        if(nums.length == 0){
-            return;
-        }
-        permutation.add(1);
-        collectPermutation(nums,1,permutation);
-        return;
-    }
-    
-    private static void collectPermutation(int[] nums, int start, List<Integer> permutation){
-        if(permutation.size() == clockSize){
-            if(isValid(permutation,start)){
+    static int[] clockArr =  new int[13];
+    static boolean[] dp = new boolean[13];
+    static boolean flag;
+
+    public static void dfs(int current){
+        if(current == clockSize){
+            if(clockArr[current] + clockArr[current-1] + clockArr[current-2] <= maxNum){
                 count ++;
-                System.out.println(permutation);
             }
-            return;
         }
-        
-        for (int i=1; i<=permutation.size(); i++){
-            List<Integer> newPermutation = new ArrayList<>(permutation);
-            newPermutation.add(i,nums[start]);
-            if(isValid(newPermutation,start+1)){
-                collectPermutation(nums, start+1, newPermutation);
+
+        for(int i=2; i<=clockSize;i++){
+            if(!dp[i]){
+                if(i+clockArr[current-1]+clockArr[current-2]<=maxNum){
+                    dp[i] = true;
+                    clockArr[current] = i;
+                    dfs(current+1);
+                    dp[i] = false;
+                }
             }
-            else{
-                return;
-            }
-            
         }
     }
+
 
     public static void main(String[] args){
         try {
@@ -60,12 +43,24 @@ public class Main{
                 maxNum = Integer.parseInt(currLine[1]);  
                 System.out.println("Permutation size: "+  clockSize);
                 System.out.println("Maximum triplet sum: " + maxNum);
-                int[] clockArr  = new int[clockSize+2];
-                for (int i = 0; i < clockSize; i++) {
-                    clockArr[i] = i+1;    
+                clockArr[1] = 1;
+                dp[1] = true;
+                for(int i=2;i<= clockSize; i++){
+                    for(int j=i+1; j<=clockSize;j++){
+                        if(i+j+1<=maxNum){
+                            flag = true;
+                            clockArr[clockSize] = i;
+                            clockArr[2] = j;
+                            dp[i] = true;
+                            dp[j] = true;
+
+                            dfs(3);
+                            dp[i] = false;
+                            dp[j] = false;
+                        }
+                    }
                 }
-                permute(clockArr);
-                System.out.println(count);
+                System.out.println("Valid permutation: " + count);
             }
         } catch (Exception e) {
             e.printStackTrace();
