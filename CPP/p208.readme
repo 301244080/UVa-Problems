@@ -1,0 +1,8 @@
+Each node can only be visited once, each edge can only be visited once.
+This question is to give you at most 21 maps which contains the correlation between streets. You are asked to list all possible routes from firestation to the fire.
+Data Structure:
+map[] contains all correlation between stations
+visit[] array is used to mark all visited nodes
+save[] array contains all save routes
+
+Algorithm: We apply a DFS on map[] to find all possible routes, at the same time visit[] array is used to mark visited routes in order to trim unwanted branches for DFS (in case the time is exceeded)
