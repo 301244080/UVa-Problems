@@ -1,0 +1,10 @@
+The question is quite straight forward, we need to find out minimum moves to bring the box to the target location.
+
+Data Structure:
+Pre-defined struct: State, which contains coordinate of box and myself, number of moves been made, and the path to put the box at the target area.
+Priority queue, Q, which is used to prioritizes State: we always prefer states with less pushes.
+
+Algorithm: Breadth First Search
+The BFS starts by adding the initial state to the priority queue, followed by adding adjacents blocks to the queue.
+Since the priority queue priortizes states with less pushes to be polled first, we are able to get the solution that minimizes the number of pushes, if there is more than one such
+sequence, we choose the one that minimizes the number of total moves (walks and pushes).
