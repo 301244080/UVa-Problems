@@ -32,8 +32,8 @@ public class Main{
 
     public static void main(String[] args){
         try {
-            // BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-            BufferedReader br = new BufferedReader(new FileReader("test.txt"));
+            BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+            // BufferedReader br = new BufferedReader(new FileReader("test.txt"));
             int caseSize = Integer.parseInt(br.readLine());
             while(caseSize!=0){
                 caseSize --;
